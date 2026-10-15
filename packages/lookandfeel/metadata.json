@@ -7,10 +7,10 @@
                 "Name": "helba"
             }
         ],
-        "Description": "Helba World login splash (.hack, The World): the Chaos Gate draws itself in as the session loads. Only the splash; selected through ksplashrc, not as a global theme.",
+        "Description": "Helba World (.hack, The World): the login splash (the Chaos Gate drawing itself in) and the logout screen. Everything else comes from the other Helba World packages.",
         "Id": "org.helba.world",
         "License": "MIT",
-        "Name": "Helba World splash",
+        "Name": "Helba World",
         "Version": "1.0.0"
     },
     "X-Plasma-APIVersion": "2"

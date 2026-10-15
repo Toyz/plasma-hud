@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 stage=${1:-3}; light=${2:-0}; out=${3:-$PWD/splash-$stage-$light.png}
 tmp=$(mktemp -d)
-cp ../packages/splash/contents/splash/Splash.qml "$tmp/"
+cp ../packages/lookandfeel/contents/splash/Splash.qml "$tmp/"
 [ "$light" = 1 ] && sed -i 's/readonly property bool light: Kirigami.Theme.backgroundColor.hslLightness > 0.5/readonly property bool light: true/' "$tmp/Splash.qml"
 [ "$light" = 0 ] && sed -i 's/readonly property bool light: Kirigami.Theme.backgroundColor.hslLightness > 0.5/readonly property bool light: false/' "$tmp/Splash.qml"
 cat > "$tmp/run.qml" <<QML

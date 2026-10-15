@@ -388,7 +388,7 @@ restore_icons() {
     say "icons: ${prev:-breeze-dark} (restored)"
 }
 
-# Login splash: packages/splash is a look-and-feel package (org.helba.world) that only
+# Login splash: packages/lookandfeel is a look-and-feel package (org.helba.world) that only
 # carries the splash; ksplashrc picks it, so the global theme stays as it is.
 apply_splash() {
     current=$(kreadconfig6 --file ksplashrc --group KSplash --key Theme 2>/dev/null || true)
@@ -398,6 +398,25 @@ apply_splash() {
     kwriteconfig6 --file ksplashrc --group KSplash --key Engine KSplashQML
     kwriteconfig6 --file ksplashrc --group KSplash --key Theme org.helba.world
     say "splash: Helba World (was ${current:-the global theme's})"
+}
+
+# Logout screen: ksmserver-logout-greeter only reads the global theme key, so it
+# points at org.helba.world (splash + logout only). Nothing else reads that key
+# outside the Global Theme settings page, where re-applying a theme sets it again.
+apply_logout() {
+    current=$(kreadconfig6 --group KDE --key LookAndFeelPackage 2>/dev/null || true)
+    [ "$current" = org.helba.world ] && { say "logout screen: Helba World (kept)"; return; }
+    mkdir -p "$state"
+    printf '%s\n' "$current" > "$state/lookandfeel.before"
+    kwriteconfig6 --group KDE --key LookAndFeelPackage org.helba.world
+    say "logout screen: Helba World (global theme key was ${current:-default})"
+}
+
+restore_logout() {
+    [ -f "$state/lookandfeel.before" ] || return 0
+    prev=$(cat "$state/lookandfeel.before")
+    if [ -n "$prev" ]; then kwriteconfig6 --group KDE --key LookAndFeelPackage "$prev"; else kwriteconfig6 --group KDE --key LookAndFeelPackage --delete; fi
+    say "logout screen: ${prev:-default} (restored)"
 }
 
 restore_splash() {
@@ -474,6 +493,7 @@ case "${1:-}" in
         restore_gtk
         restore_icons
         restore_splash
+        restore_logout
         ;;
     --no-layout)
         build
@@ -507,6 +527,7 @@ case "${1:-}" in
         apply_gtk
         apply_icons
         apply_splash
+        apply_logout
         units
         "$hudctl" layout
         ;;
