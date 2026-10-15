@@ -14,6 +14,9 @@ const closeMs = 800;
 const minimizeMs = 480;
 const restoreMs = 520;
 
+const QUICK = ["spectacle", "krunner", "polkit-kde-authentication-agent", "xwaylandvideobridge",
+    "ksmserver-logout-greeter", "kscreenlocker", "org.kde.kdeconnect"];
+
 // Real application windows only: no panels, popups, menus, tooltips or the desktop.
 function gated(w) {
     if (effects.hasActiveFullScreenEffect) return false;
@@ -23,6 +26,13 @@ function gated(w) {
     // and made the Chaos Gate assemble one screen at a time.
     if (!w.managed) return false;
     if (String(w.windowClass).indexOf("plasmashell") >= 0) return false;
+    // Fullscreen windows (Spectacle's capture overlay, games, video) and quick-use
+    // utilities should appear at once, not after a gate.
+    if (w.fullScreen) return false;
+    const cls = String(w.windowClass).toLowerCase();
+    for (const quick of QUICK) {
+        if (cls.indexOf(quick) >= 0) return false;
+    }
     if (w.popupWindow || w.outline || w.lockScreen || w.inputMethod) return false;
     if (w.desktopWindow || w.dock || w.splash || w.toolbar || w.notification || w.onScreenDisplay) return false;
     return w.normalWindow || w.dialog;

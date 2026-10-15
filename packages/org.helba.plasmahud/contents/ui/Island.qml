@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 
 // A floating plate that hugs its content. With wrapPrevious the plate also extends
 // under the applet just before this one in the panel (the stock system tray), drawn
@@ -102,6 +103,64 @@ Item {
         running: isl.wrapPrevious && isl.visible
         repeat: true
         onTriggered: external.active ? isl.syncExternal() : isl.attachExternal()
+    }
+
+    // ------------------------------------------------------------ tint app tray icons
+
+    // Apps like Discord, Docker or Claude hand the tray a picture instead of an icon
+    // name, so no icon theme reaches them. Tint just those (the tray's StatusNotifier
+    // delegates, not Plasma's own applets) into gold silhouettes. Leans on how the
+    // stock tray builds its delegates; if that ever changes, nothing gets tinted.
+    Component {
+        id: trayTint
+        MultiEffect {
+            colorization: 1.0
+            colorizationColor: isl.hud.gold
+            brightness: 0.12
+        }
+    }
+    function tintTray() {
+        try {
+            const tray = previousContainer();
+            if (!tray) return;
+            let added = 0;
+            const visit = (it, depth) => {
+                if (!it || depth > 12) return;
+                let sni = false;
+                try { sni = it.model && it.model.itemType === "StatusNotifier" && String(it).indexOf("StatusNotifierItem") === 0; } catch (e) {}
+                if (sni) {
+                    const icon = findIcon(it, 0);
+                    if (icon && !icon.layer.enabled) {
+                        icon.layer.enabled = true;
+                        icon.layer.effect = trayTint;
+                        added++;
+                    }
+                    return;
+                }
+                for (let i = 0; i < it.children.length; i++) visit(it.children[i], depth + 1);
+            };
+            visit(tray, 0);
+            if (added) console.warn("plasmahud: tinted", added, "app tray icons");
+        } catch (e) {
+            console.warn("plasmahud: tray tint skipped:", e);
+        }
+    }
+    function findIcon(it, depth) {
+        if (!it || depth > 4) return null;
+        if (String(it).indexOf("Icon") === 0) return it;
+        for (let i = 0; i < it.children.length; i++) {
+            const f = findIcon(it.children[i], depth + 1);
+            if (f) return f;
+        }
+        return null;
+    }
+    Timer {
+        // Tray icons come and go; tint newcomers.
+        interval: 2000
+        running: isl.wrapPrevious && isl.visible && external.active
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: isl.tintTray()
     }
 
     Component.onDestruction: if (external.plate) external.plate.destroy()
