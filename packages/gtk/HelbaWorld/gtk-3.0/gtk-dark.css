@@ -1,0 +1,5 @@
+/* Helba World (GTK 3, prefer-dark apps). Breeze's own dark variant hard-codes its
+ * colors; the named-color Breeze sheet follows the KDE scheme, which is already dark
+ * under Helba World, so both variants use it. */
+@import url("file:///usr/share/themes/Breeze/gtk-3.0/gtk.css");
+@import url("helba.css");

@@ -1,0 +1,3 @@
+/* Helba World (GTK 3): Breeze underneath, .hack trim on top (helba.css). */
+@import url("file:///usr/share/themes/Breeze/gtk-3.0/gtk.css");
+@import url("helba.css");

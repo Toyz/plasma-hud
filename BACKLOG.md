@@ -60,7 +60,10 @@ Ordered. Check things off as they land.
 - [x] Login screen (SDDM, packages/sddm/helba-world): sigil + glass plate, user diamonds, session,
       power keycaps; `./installer.sh --sddm` installs it with screen 0's wallpaper (sudo)
 - [x] Gate-in arrival on login (once per session) and on unlock (ScreenSaver.ActiveChanged)
-- [ ] Helba World for GTK2 and GTK3 apps (and GTK4 / libadwaita colors)
+- [x] Helba World for GTK (packages/gtk/HelbaWorld): Breeze + .hack trim for GTK 3 (gold-edged menus,
+      popovers, tooltips; cyan wash + gold brackets on selection; gold tabs, checks, scrollbars),
+      colors live from the KDE scheme; GTK 2 gets Breeze Dark with Helba colors; GTK 4 / libadwaita
+      take the scheme colors through Plasma's gtkconfig
 - [ ] .hack-inspired icon theme (apps, places, actions), for Qt and GTK
 
 ## After the backlog

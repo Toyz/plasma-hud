@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=HelbaWorld
+Comment=.hack (The World) for GTK: Breeze with gold-edged menus, popovers and tooltips, the cyan wash with gold brackets on selection, gold scrollbars. Colors follow the KDE color scheme.
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=HelbaWorld

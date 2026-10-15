@@ -48,6 +48,9 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   - Aurorae window frames, dark and light
   - a Kvantum widget style for menus, tooltips and controls
 
+  - a GTK theme (`HelbaWorld`): Breeze with the same .hack trim for GTK 3 apps, Breeze
+    Dark with Helba colors for GTK 2
+
   Everything follows the KDE color scheme. Switch between Helba World and Helba World
   Light in System Settings and the whole rice flips.
 - **hudprobe**: socket-activated telemetry daemon (top processes, load, IP, pacman state).
@@ -70,8 +73,8 @@ packages/
   aurorae/              window frames
 systemd/                hudprobe.socket / hudprobe.service user units
 dev/                    generators (theme, color schemes, frames, Kvantum) and offscreen renderers
-                        (switcher.sh / lock.sh render the KWin switchers and the lock screen
-                        with mock data)
+                        (switcher.sh / lock.sh / sddm.sh render the KWin switchers, lock
+                        and login screens with mock data; gtk_preview.py renders GTK widgets)
 installer.sh            the one entry point
 ```
 

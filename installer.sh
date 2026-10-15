@@ -337,6 +337,33 @@ restore_sddm() {
     say "login screen: back to the system default"
 }
 
+# GTK apps: the HelbaWorld GTK theme is Breeze plus .hack trim, colored from the KDE
+# scheme (Plasma's gtkconfig writes it into ~/.config/gtk-3.0/colors.css). Applied
+# through gtkconfig so GTK 3, GTK 2 and xsettings all switch together.
+gtkconfig() { qdbus6 org.kde.kded6 /modules/gtkconfig "org.kde.GtkConfig.$@"; }
+
+link_gtk() {
+    mkdir -p "$data/themes"
+    ln -sfn "$root/packages/gtk/HelbaWorld" "$data/themes/HelbaWorld"
+    say "linked HelbaWorld GTK theme"
+}
+
+apply_gtk() {
+    current=$(gtkconfig gtkTheme 2>/dev/null || true)
+    [ "$current" = HelbaWorld ] && { say "GTK theme: HelbaWorld (kept)"; return; }
+    mkdir -p "$state"
+    printf '%s\n' "$current" > "$state/gtktheme.before"
+    gtkconfig setGtkTheme HelbaWorld >/dev/null 2>&1 || true
+    say "GTK theme: HelbaWorld (was ${current:-unknown}); reopen GTK apps to see it"
+}
+
+restore_gtk() {
+    [ -f "$state/gtktheme.before" ] || return 0
+    prev=$(cat "$state/gtktheme.before")
+    gtkconfig setGtkTheme "${prev:-Breeze}" >/dev/null 2>&1 || true
+    say "GTK theme: ${prev:-Breeze} (restored)"
+}
+
 restore_scheme() {
     [ -f "$state/colorscheme.before" ] || return 0
     plasma-apply-colorscheme "$(cat "$state/colorscheme.before")" >/dev/null \
@@ -402,6 +429,7 @@ case "${1:-}" in
         restore_gate
         restore_switchers
         restore_lockscreen
+        restore_gtk
         ;;
     --no-layout)
         build
@@ -411,6 +439,7 @@ case "${1:-}" in
         link_schemes
         link_frames
         link_kvantum
+        link_gtk
         units
         ;;
     "")
@@ -421,6 +450,7 @@ case "${1:-}" in
         link_schemes
         link_frames
         link_kvantum
+        link_gtk
         apply_theme
         apply_scheme
         apply_frames
@@ -428,6 +458,7 @@ case "${1:-}" in
         apply_gate
         apply_switchers
         apply_lockscreen
+        apply_gtk
         units
         "$hudctl" layout
         ;;
