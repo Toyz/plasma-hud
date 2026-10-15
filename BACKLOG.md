@@ -53,7 +53,10 @@ Ordered. Check things off as they land.
 - [x] Alt+Tab party roster (helba-roster): member lines with diamond icon badges, cyan wash + gold
       brackets on the current one, live view of it; Meta+Tab gate ring (helba-gatering): live windows on
       a tilted ring around the Chaos Gate sigil
-- [ ] Lock screen
+- [x] Lock screen (packages/lockshell, org.helba.lockshell): serif clock over the wallpaper with the
+      turning sigil; any key raises "The World" log-in plate (avatar diamond, glass field, shake on
+      failure). Loaded via PLASMA_DEFAULT_SHELL in KWin's unit only (Plasma 6.7 has no look-and-feel
+      lock screens)
 - [ ] Login screen (SDDM)
 
 ## After the backlog

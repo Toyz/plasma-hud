@@ -58,6 +58,7 @@ package_dir() {
         Plasma/Theme) echo "$data/plasma/desktoptheme" ;;
         KWin/Effect) echo "$data/kwin/effects" ;;
         KWin/WindowSwitcher) echo "$data/kwin/tabbox" ;;
+        Plasma/Shell) echo "$data/plasma/shells" ;;
         *) return 1 ;;
     esac
 }
@@ -268,6 +269,32 @@ restore_switchers() {
     say "switchers: restored"
 }
 
+# Lock screen. Plasma 6.7 loads the lock screen from a shell package: plasmashellrc
+# [Shell] ShellPackage, else $PLASMA_DEFAULT_SHELL, else org.kde.plasma.desktop. That
+# key also picks the desktop shell, so instead the variable is set for KWin only (the
+# greeter is KWin's child and inherits it); plasmashell, its own unit, never sees it.
+# Takes effect at the next login. If our QML ever failed the greeter would fall back to
+# its built-in locker, so this cannot lock you out.
+kwin_dropin="$config/systemd/user/plasma-kwin_wayland.service.d/helba-lockscreen.conf"
+
+apply_lockscreen() {
+    mkdir -p "$(dirname "$kwin_dropin")"
+    cat > "$kwin_dropin" <<UNIT
+# plasma-hud: the screen locker loads its UI from this shell package (lock screen only).
+[Service]
+Environment=PLASMA_DEFAULT_SHELL=org.helba.lockshell
+UNIT
+    systemctl --user daemon-reload
+    say "lock screen: Helba World from the next login (KWin drop-in)"
+}
+
+restore_lockscreen() {
+    [ -f "$kwin_dropin" ] || return 0
+    rm -f "$kwin_dropin"
+    systemctl --user daemon-reload
+    say "lock screen: Plasma default from the next login"
+}
+
 restore_scheme() {
     [ -f "$state/colorscheme.before" ] || return 0
     plasma-apply-colorscheme "$(cat "$state/colorscheme.before")" >/dev/null \
@@ -326,6 +353,7 @@ case "${1:-}" in
         restore_kvantum
         restore_gate
         restore_switchers
+        restore_lockscreen
         ;;
     --no-layout)
         build
@@ -351,6 +379,7 @@ case "${1:-}" in
         apply_kvantum
         apply_gate
         apply_switchers
+        apply_lockscreen
         units
         "$hudctl" layout
         ;;

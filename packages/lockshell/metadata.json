@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "Plasma/Shell",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Description": "Helba World lock screen. Not a desktop shell: the screen locker loads it through PLASMA_DEFAULT_SHELL in KWin's environment; plasmashell keeps org.kde.plasma.desktop.",
+        "Id": "org.helba.lockshell",
+        "License": "MIT",
+        "Name": "Helba World lock screen",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-APIVersion": "2"
+}

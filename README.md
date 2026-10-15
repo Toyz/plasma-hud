@@ -27,6 +27,11 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
 - **Switchers**: Alt+Tab is the party roster (`helba-roster`), a list of windows with a
   live view of the selected one. Meta+Tab is the gate ring (`helba-gatering`), with live
   windows turning on a ring around the Chaos Gate sigil.
+- **Lock screen** (`packages/lockshell`): a serif clock over your wallpaper with the Chaos
+  Gate sigil turning behind it; any key raises "The World" log-in plate. Plasma 6.7 loads
+  lock screens from a shell package, so this is a lock-screen-only shell package that the
+  screen locker picks up through `PLASMA_DEFAULT_SHELL`, set for KWin alone (the desktop
+  shell is untouched). It applies from the next login.
 - **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
   load and net traces, processes, system, command deck), together in a popup or one per
   desktop widget.
@@ -61,7 +66,8 @@ packages/
   aurorae/              window frames
 systemd/                hudprobe.socket / hudprobe.service user units
 dev/                    generators (theme, color schemes, frames, Kvantum) and offscreen renderers
-                        (switcher.sh renders the KWin switchers with a mock window list)
+                        (switcher.sh / lock.sh render the KWin switchers and the lock screen
+                        with mock data)
 installer.sh            the one entry point
 ```
 
