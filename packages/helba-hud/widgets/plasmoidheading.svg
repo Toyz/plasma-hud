@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="74">
+<defs><style type="text/css" id="current-color-scheme">.ColorScheme-ButtonFocus{color:#b8935a;}.ColorScheme-ButtonHover{color:#8fe3ff;}.ColorScheme-Background{color:#0b1226;}.ColorScheme-ButtonBackground{color:#141c3e;}.ColorScheme-ViewBackground{color:#070c1c;}</style></defs>
+<g id="header-topleft"><rect x="0" y="0" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="header-top"><rect x="6" y="0" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="header-topright"><rect x="12" y="0" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="header-left"><rect x="0" y="6" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="header-center"><rect x="6" y="6" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="header-right"><rect x="12" y="6" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="header-bottomleft"><rect x="0" y="12" width="6" height="6" fill="#000" fill-opacity="0"/><rect x="0" y="17" width="6" height="1" class="ColorScheme-ButtonFocus" style="fill:currentColor" fill-opacity="0.25"/></g>
+<g id="header-bottom"><rect x="6" y="12" width="6" height="6" fill="#000" fill-opacity="0"/><rect x="6" y="17" width="6" height="1" class="ColorScheme-ButtonFocus" style="fill:currentColor" fill-opacity="0.5"/></g>
+<g id="header-bottomright"><rect x="12" y="12" width="6" height="6" fill="#000" fill-opacity="0"/><rect x="12" y="17" width="6" height="1" class="ColorScheme-ButtonFocus" style="fill:currentColor" fill-opacity="0.25"/></g>
+<g id="footer-topleft"><rect x="0" y="24" width="6" height="6" fill="#000" fill-opacity="0"/><rect x="0" y="24" width="6" height="1" class="ColorScheme-ButtonFocus" style="fill:currentColor" fill-opacity="0.25"/></g>
+<g id="footer-top"><rect x="6" y="24" width="6" height="6" fill="#000" fill-opacity="0"/><rect x="6" y="24" width="6" height="1" class="ColorScheme-ButtonFocus" style="fill:currentColor" fill-opacity="0.5"/></g>
+<g id="footer-topright"><rect x="12" y="24" width="6" height="6" fill="#000" fill-opacity="0"/><rect x="12" y="24" width="6" height="1" class="ColorScheme-ButtonFocus" style="fill:currentColor" fill-opacity="0.25"/></g>
+<g id="footer-left"><rect x="0" y="30" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="footer-center"><rect x="6" y="30" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="footer-right"><rect x="12" y="30" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="footer-bottomleft"><rect x="0" y="36" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="footer-bottom"><rect x="6" y="36" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<g id="footer-bottomright"><rect x="12" y="36" width="6" height="6" fill="#000" fill-opacity="0"/></g>
+<rect id="hint-top-margin" x="0" y="48" width="6" height="6" fill="#000" fill-opacity="0"/>
+<rect id="hint-bottom-margin" x="10" y="48" width="6" height="6" fill="#000" fill-opacity="0"/>
+<rect id="hint-left-margin" x="20" y="48" width="6" height="6" fill="#000" fill-opacity="0"/>
+<rect id="hint-right-margin" x="30" y="48" width="6" height="6" fill="#000" fill-opacity="0"/>
+<rect id="hint-stretch-borders" x="0" y="60" width="4" height="4" fill="#000" fill-opacity="0"/>
+</svg>

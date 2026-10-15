@@ -1,0 +1,8 @@
+[package]
+name = "hudctl"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "plasma-hud layout tool: edits Plasma's KConfig files directly (panels, widgets, wallpapers)"
+
+[dependencies]

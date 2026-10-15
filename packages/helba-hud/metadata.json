@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "Plasma/Theme",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Description": "plasma-hud desktop theme: invisible panels with no blur, contrast or shadow; everything else comes from the fallback theme",
+        "Id": "helba-hud",
+        "License": "MIT",
+        "Name": "HUD",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-API": "5.0"
+}

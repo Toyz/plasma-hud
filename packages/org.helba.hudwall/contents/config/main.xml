@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <!-- Same keys as org.kde.image so image setters can target this plugin unchanged. -->
+    <entry name="Image" type="String"><default></default></entry>
+    <entry name="FillMode" type="Int"><default>2</default></entry>
+    <entry name="Effect" type="Int"><default>1</default></entry>
+    <entry name="Intensity" type="Double"><default>0.55</default></entry>
+    <entry name="ColorDrift" type="Double"><default>0.35</default></entry>
+    <entry name="Speed" type="Double"><default>1.0</default></entry>
+    <entry name="Palette" type="Int"><default>1</default></entry>
+    <entry name="Fps" type="Int"><default>30</default></entry>
+    <entry name="PauseWhenCovered" type="Bool"><default>true</default></entry>
+    <entry name="Span" type="Bool"><default>true</default></entry>
+    <entry name="Seed" type="Double"><default>-1</default></entry>
+    <entry name="PublishAccent" type="Bool"><default>true</default></entry>
+  </group>
+</kcfg>

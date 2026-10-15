@@ -1,0 +1,21 @@
+/target/
+.ruff_cache/
+__pycache__/
+
+# Generated locally by installer.sh from Breeze's color schemes and Kvantum's KvFlat
+# themes. They carry those projects' licenses, so they are not part of this repo.
+/packages/color-schemes/
+/packages/kvantum/
+
+# Built by installer.sh
+/packages/org.helba.plasmahud/contents/bin/
+/packages/org.helba.plasmahud/contents/lib/
+/packages/org.helba.hudwall/contents/shaders/*.qsb
+/packages/org.helba.hudwall/contents/shaders/.build/
+
+# Dev renders and temporary harness files
+/dev/*.png
+/dev/.*.qml
+
+# Machine-local tooling
+.qmlls.ini

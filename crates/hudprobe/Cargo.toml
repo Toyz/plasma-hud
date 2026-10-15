@@ -1,0 +1,8 @@
+[package]
+name = "hudprobe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Telemetry probe for the plasmahud plasmoid: top processes, load, network, pacman state"
+
+[dependencies]

@@ -1,0 +1,49 @@
+// Outrun: perspective grid floor, striped sun, fbm ridge line. Image stays as the sky.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec2 gp = span.xy + uv * resolution;
+    vec2 s = gp / span.zw;
+    float aspect = span.z / span.w;
+    float y = 1.0 - s.y;
+    float hz = 0.34;
+    vec3 img = texture(src, uv).rgb;
+
+    vec3 sky = hasImage > 0.5
+        ? img * mix(1.0, 0.6, intensity)
+        : mix(accent2.rgb * 0.22, vec3(0.01, 0.0, 0.03), smoothstep(hz, 1.0, y));
+    vec3 col = sky;
+
+    // Sun.
+    vec2 sc = vec2(0.5 * aspect, hz + 0.16);
+    vec2 sv = vec2(s.x * aspect, y) - sc;
+    float r = length(sv);
+    float sunR = 0.2;
+    float stripes = step(0.0, sin((y - hz) * 120.0 - time * 1.5)) + step(0.06, y - hz - 0.0);
+    float cut = sv.y < 0.0 ? step(0.5, fract((sv.y) * 22.0 - time * 0.4) + (sv.y + sunR) * 3.0) : 1.0;
+    float sun = smoothstep(sunR, sunR - 0.003, r) * cut;
+    vec3 sunCol = mix(accent.rgb, accent2.rgb, smoothstep(-sunR, sunR, sv.y));
+    col = mix(col, sunCol * 1.2, sun * intensity);
+    col += sunCol * exp(-max(r - sunR, 0.0) * 9.0) * 0.35 * intensity;
+
+    // Ridge.
+    float ridge = hz + 0.05 + 0.07 * fbm(vec2(s.x * aspect * 3.0 + seed * 10.0, 1.0));
+    if (y < ridge && y >= hz) {
+        col = mix(col, vec3(0.01, 0.0, 0.02), 0.9 * intensity);
+        col += accent2.rgb * smoothstep(0.004, 0.0, ridge - y) * intensity;
+    }
+
+    // Floor.
+    if (y < hz) {
+        float d = hz - y;
+        float z = 0.1 / d;
+        vec2 g = vec2((s.x - 0.5) * aspect * z * 2.0, z + time * 0.9);
+        vec2 gr = abs(fract(g) - 0.5) / max(fwidth(g), vec2(1e-4));
+        float line = 1.0 - min(min(gr.x, gr.y), 1.0);
+        float fade = exp(-z * 0.08);
+        vec3 floorCol = vec3(0.01, 0.0, 0.025) + accent.rgb * (line * fade * 1.4 + 0.08 * fade);
+        vec3 under = hasImage > 0.5 ? img * 0.25 : vec3(0.0);
+        col = mix(sky, under + floorCol, intensity);
+    }
+    col += accent.rgb * exp(-abs(y - hz) * 90.0) * 0.8 * intensity;
+    fragColor = vec4(chromaDrift(vignette(col, uv), uv, chroma), 1.0) * qt_Opacity;
+}

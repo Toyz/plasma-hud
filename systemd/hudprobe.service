@@ -1,0 +1,9 @@
+[Unit]
+Description=hudprobe telemetry daemon (Plasma HUD)
+Requires=hudprobe.socket
+
+[Service]
+# Started on the first connection; exits on its own after 5 idle minutes.
+ExecStart=%h/.local/share/plasma/plasmoids/org.helba.plasmahud/contents/bin/hudprobe serve
+Nice=10
+NoNewPrivileges=yes

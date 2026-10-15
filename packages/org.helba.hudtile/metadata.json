@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "One HUD card on the desktop: telemetry gauges, core matrix, load or net traces, processes, system, or the command deck",
+        "Icon": "utilities-system-monitor",
+        "Id": "org.helba.hudtile",
+        "License": "MIT",
+        "Name": "HUD Tile",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

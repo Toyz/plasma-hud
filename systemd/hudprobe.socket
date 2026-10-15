@@ -1,0 +1,9 @@
+[Unit]
+Description=hudprobe telemetry socket (Plasma HUD)
+
+[Socket]
+ListenStream=%t/hudprobe.sock
+SocketMode=0600
+
+[Install]
+WantedBy=sockets.target

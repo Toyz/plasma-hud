@@ -1,0 +1,35 @@
+// Data Drain (.hack): the picture breaks into data cells that lift away in slow drifting
+// patches, brightest pixels first, tinted toward the drain's cyan and leaving dimmed holes
+// and faint grid lines behind; then they settle back. Every cell carries its own pixels.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec2 gp = span.xy + uv * resolution;
+    const vec3 drainCyan = vec3(0.56, 0.89, 1.0);
+
+    float cell = mix(10.0, 18.0, intensity);
+    vec2 id = floor(gp / cell);
+    vec2 local = fract(gp / cell);
+    vec2 cuv = ((id + 0.5) * cell - span.xy) / resolution;
+
+    // Where the drain is: slow fbm patches, pulled toward bright parts of the image.
+    float t = time * 0.12;
+    float field = fbm(id * 0.045 + vec2(t, -t * 0.7) + seed * 7.0);
+    float lum = luma(textureLod(src, clamp(cuv, 0.0, 1.0), 2.0).rgb);
+    float drain = smoothstep(0.6, 0.78, field + lum * 0.25) * intensity;
+
+    // Each cell leaves on its own beat, rises, shrinks, and comes back.
+    float ph = fract(hash(id + seed * 13.0) + time * 0.35);
+    float lift = drain * ph;
+    vec2 off = vec2(0.0, lift * cell * 6.0) / resolution;
+    vec2 d = abs(local - 0.5);
+    float inside = step(max(d.x, d.y), 0.5 * (1.0 - lift * 0.7));
+
+    vec3 base = texture(src, uv).rgb;
+    vec3 cellCol = texture(src, uv + off).rgb;
+    cellCol = mix(cellCol, luma(cellCol) * drainCyan + drainCyan * 0.12, lift * 0.65);
+    vec3 hole = base * (1.0 - drain * 0.55);
+    vec3 col = lift > 0.02 ? mix(hole, cellCol, inside) : base;
+
+    col += drainCyan * smoothstep(0.46, 0.5, max(d.x, d.y)) * drain * 0.22;
+    fragColor = vec4(vignette(chromaDrift(col, uv, chroma), uv), 1.0) * qt_Opacity;
+}

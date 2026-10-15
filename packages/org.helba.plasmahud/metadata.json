@@ -1,0 +1,22 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Cyberpunk telemetry badge with a floating system HUD",
+        "Icon": "utilities-system-monitor",
+        "Id": "org.helba.plasmahud",
+        "License": "MIT",
+        "Name": "Plasma HUD",
+        "Version": "1.0.0"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.launchermenu"
+    ]
+}

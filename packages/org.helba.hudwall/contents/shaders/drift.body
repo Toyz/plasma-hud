@@ -1,0 +1,7 @@
+// Chroma drift on its own: the picture untouched except its colored pixels, which slowly
+// swing a few degrees of hue. Strength comes from the effect intensity.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec3 c = texture(src, uv).rgb;
+    fragColor = vec4(chromaDrift(c, uv, max(intensity, chroma)), 1.0) * qt_Opacity;
+}

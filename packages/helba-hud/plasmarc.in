@@ -1,0 +1,12 @@
+# Generated into plasmarc by installer.sh (FallbackTheme = the theme active before HUD).
+[Settings]
+FallbackTheme=@FALLBACK@
+
+[BlurBehindEffect]
+enabled=false
+
+[ContrastEffect]
+enabled=false
+
+[AdaptiveTransparency]
+enabled=false

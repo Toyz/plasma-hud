@@ -1,0 +1,23 @@
+// Edge neon: the image's Sobel contours light up in the saturated hue of the pixels beneath,
+// with pulses racing along iso-luminance bands.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec2 px = 1.5 / resolution;
+    float tl = L(uv + vec2(-px.x, -px.y), 1.0), t = L(uv + vec2(0, -px.y), 1.0), tr = L(uv + vec2(px.x, -px.y), 1.0);
+    float l = L(uv + vec2(-px.x, 0), 1.0), r = L(uv + vec2(px.x, 0), 1.0);
+    float bl = L(uv + vec2(-px.x, px.y), 1.0), b = L(uv + vec2(0, px.y), 1.0), br = L(uv + vec2(px.x, px.y), 1.0);
+    float gx = -tl - 2.0 * l - bl + tr + 2.0 * r + br;
+    float gy = -tl - 2.0 * t - tr + bl + 2.0 * b + br;
+    float e = smoothstep(0.08, 0.5, length(vec2(gx, gy)));
+
+    vec3 base = texture(src, uv).rgb;
+    vec3 hsv = rgb2hsv(textureLod(src, uv, 2.0).rgb);
+    // Gray pixels have no hue of their own: borrow the image's accent (from its palette).
+    vec3 neonC = mix(accent.rgb, hsv2rgb(vec3(hsv.x, max(hsv.y, 0.75), 1.0)), smoothstep(0.08, 0.3, hsv.y));
+
+    float lum = L(uv, 2.0);
+    float pulse = pow(0.5 + 0.5 * sin(lum * 48.0 - time * 3.0 + seed * 6.0), 8.0);
+    vec3 col = base * (1.0 - 0.55 * intensity);
+    col += neonC * e * (0.35 + 1.6 * pulse) * intensity;
+    fragColor = vec4(chromaDrift(col, uv, chroma), 1.0) * qt_Opacity;
+}

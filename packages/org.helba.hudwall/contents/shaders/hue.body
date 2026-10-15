@@ -1,0 +1,14 @@
+// Hue cycle waves: every pixel's own hue rotates along slow traveling waves keyed to its
+// brightness, so color bands sweep through the picture while detail stays put.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec3 c = texture(src, uv).rgb;
+    vec3 hsv = rgb2hsv(c);
+    float lum = L(uv, 3.0);
+    float aspect = resolution.x / resolution.y;
+    float w = sin(dot(uv * vec2(aspect, 1.0), vec2(2.3, 1.1)) * 2.0 + lum * 7.0 - time * 0.6 + seed * 6.0);
+    w += 0.5 * sin(length(uv - 0.5) * 9.0 - time * 0.4);
+    hsv.x = fract(hsv.x + w * 0.12 * intensity + time * 0.01 * intensity);
+    hsv.y = clamp(hsv.y * (1.0 + 0.3 * intensity), 0.0, 1.0);
+    fragColor = vec4(chromaDrift(hsv2rgb(hsv), uv, chroma), 1.0) * qt_Opacity;
+}

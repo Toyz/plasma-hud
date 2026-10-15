@@ -1,0 +1,27 @@
+// Emissive bloom: the image's own bright, saturated pixels become light. Multi-mip bloom,
+// anamorphic streaks and chromatic halation, breathing with a slow pulse.
+vec3 emit(vec2 uv, float lod, float thr) {
+    vec3 c = textureLod(src, uv, lod).rgb;
+    float l = luma(c);
+    float s = rgb2hsv(c).y;
+    return c * smoothstep(thr, 1.0, l + s * 0.25);
+}
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec3 base = texture(src, uv).rgb;
+    float pulse = 0.75 + 0.25 * sin(time * 0.9 + seed * 6.0);
+    float thr = mix(0.7, 0.38, intensity);
+
+    vec3 bloom = emit(uv, 2.0, thr) * 0.4 + emit(uv, 3.5, thr) * 0.6 + emit(uv, 5.0, thr) * 0.9 + emit(uv, 6.5, thr) * 1.2;
+
+    vec3 streak = vec3(0.0);
+    for (int i = -12; i <= 12; i++) {
+        float o = float(i) * 0.012;
+        streak += emit(uv + vec2(o, 0.0), 3.0, thr) * exp(-abs(float(i)) * 0.22);
+    }
+    vec2 d = (uv - 0.5) * 0.012 * intensity;
+    vec3 halo = vec3(emit(uv + d, 5.0, thr).r, emit(uv, 5.0, thr).g, emit(uv - d, 5.0, thr).b);
+
+    vec3 col = base + (bloom * 1.1 + streak * 0.14 + halo * 0.8) * intensity * pulse;
+    fragColor = vec4(chromaDrift(col, uv, chroma), 1.0) * qt_Opacity;
+}

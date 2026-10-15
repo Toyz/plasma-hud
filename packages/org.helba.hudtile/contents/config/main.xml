@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <!-- Which card: 0 telemetry, 1 core matrix, 2 load trace, 3 net link, 4 processes,
+         5 system, 6 command deck. -->
+    <entry name="card" type="Int"><default>0</default></entry>
+    <entry name="processRows" type="Int"><default>7</default></entry>
+    <!-- Shared look with the HUD widget. -->
+    <entry name="palette" type="Int"><default>1</default></entry>
+    <entry name="colorMode" type="Int"><default>0</default></entry>
+    <entry name="monoFont" type="String"><default>Hack</default></entry>
+    <entry name="labelFont" type="String"><default>Fira Sans Condensed</default></entry>
+    <entry name="serifFont" type="String"><default>Noto Serif</default></entry>
+    <entry name="glow" type="Double"><default>0.7</default></entry>
+    <entry name="sampleMs" type="Int"><default>1000</default></entry>
+    <entry name="checkUpdates" type="Bool"><default>true</default></entry>
+    <entry name="gpuDevice" type="String"><default>gpu0</default></entry>
+    <entry name="terminalCommand" type="String"><default>konsole</default></entry>
+    <entry name="probeCommand" type="String"><default></default></entry>
+  </group>
+</kcfg>

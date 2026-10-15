@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Category": "Windows and Tasks",
+        "Description": "The Chaos Gate: warp between workspaces by keyword, jump to windows, run commands (Meta+Space)",
+        "Icon": "preferences-system-windows-effect-desktopgrid",
+        "Id": "org.helba.chaosgate",
+        "License": "MIT",
+        "Name": "Chaos Gate",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

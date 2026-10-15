@@ -1,0 +1,31 @@
+// Luma depth parallax: blurred luminance is a height field. A drifting camera ray-steps
+// through it (parallax occlusion), bright parts float forward, focus breathes for depth of field.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    float a = intensity;
+    vec2 cam = vec2(sin(time * 0.11 + seed * 6.0), cos(time * 0.083 + seed * 3.0) * 0.6) * 0.035 * a;
+
+    // Parallax occlusion: walk from the near plane into the height field.
+    const int N = 24;
+    vec2 stepv = cam / float(N);
+    vec2 p = uv + cam * 0.5;
+    float layer = 1.0, dl = 1.0 / float(N);
+    float h = L(p, 3.0);
+    for (int i = 0; i < N; i++) {
+        if (h >= layer) break;
+        p -= stepv;
+        layer -= dl;
+        h = L(p, 3.0);
+    }
+    float depth = L(p, 4.0);
+    float focus = 0.5 + 0.35 * sin(time * 0.05 + seed * 2.0);
+    float blur = clamp(abs(depth - focus) * 5.0 * a, 0.0, 3.5);
+    vec3 col = textureLod(src, p, blur).rgb;
+
+    // Light from the camera side: relief shading from the depth gradient.
+    vec2 g = gradL(p, 3.0, vec2(0.004));
+    float shade = clamp(1.0 + dot(normalize(vec3(-g * 14.0, 1.0)).xy, normalize(cam + 1e-5)) * 0.35 * a, 0.6, 1.4);
+    col *= shade;
+    col += col * smoothstep(0.75, 1.0, depth) * 0.25 * a;
+    fragColor = vec4(chromaDrift(col, uv, chroma), 1.0) * qt_Opacity;
+}

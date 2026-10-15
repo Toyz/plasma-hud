@@ -1,0 +1,80 @@
+# plasma-hud
+
+My personal KDE Plasma 6 rice, themed after .hack's "The World": midnight glass, gold
+trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
+(CachyOS, Wayland, three monitors) and shared as-is.
+
+> **This is a personal theme.** You are welcome to use it, fork it, or take pieces of it
+> under the MIT license. I am not accepting contributions, and issues and pull requests
+> will be looked at rarely, if ever.
+
+## What is in it
+
+- **Island bar** (`org.helba.plasmahud`): replaces the stock panel with docked, transparent
+  islands. Left: the Root Town launcher and live workspace maps (click to warp, drag
+  windows between areas, + to add, x to remove). Middle: the task strip. Right: the tray,
+  a seconds-sweep clock and a CPU/GPU/memory pulse.
+- **Root Town** (Meta): app launcher on the primary screen. Instant search ranked by use,
+  pinned and frequent tabs, and launch-or-raise for apps that are already open.
+- **Chaos Gate** (`org.helba.chaosgate`, Meta+Space): command palette. Warp between
+  workspaces by their generated three-word area names, jump to windows, and run commands.
+- **Gate warp**: a .hack gate-out / gate-in transition across every screen on each
+  workspace switch.
+- **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
+  load and net traces, processes, system, command deck), together in a popup or one per
+  desktop widget.
+- **HUD Shader Wall** (`org.helba.hudwall`): per-screen GLSL wallpaper effects driven by the
+  image's own pixels. The default is Data Drain; others include chroma drift, depth, ink,
+  pixel sort and growth. It can span all screens seamlessly and pauses when windows cover it.
+- **Look**:
+  - a Plasma desktop theme (`helba-hud`) for the stock popups (volume, network, bluetooth)
+  - Helba World KDE color schemes, dark and light
+  - Aurorae window frames, dark and light
+  - a Kvantum widget style for menus, tooltips and controls
+
+  Everything follows the KDE color scheme. Switch between Helba World and Helba World
+  Light in System Settings and the whole rice flips.
+- **hudprobe**: socket-activated telemetry daemon (top processes, load, IP, pacman state).
+  It only samples while something is connected and exits when idle.
+
+## Layout
+
+```
+Cargo.toml              workspace
+crates/
+  hudprobe/             telemetry daemon (one-shot probe + `serve` on a unix socket)
+  hudsock/              Rust (cxx-qt) QML module org.helba.hud: ProbeSocket
+  hudctl/               panel/wallpaper layout tool, edits Plasma's KConfig files directly
+packages/
+  org.helba.plasmahud/  island bar, launcher, HUD popup, warp (the shared QML lives here)
+  org.helba.chaosgate/  Chaos Gate
+  org.helba.hudtile/    HUD Tile desktop widget
+  org.helba.hudwall/    shader wallpaper (shaders/build.sh -> .qsb)
+  helba-hud/            Plasma desktop theme
+  aurorae/              window frames
+systemd/                hudprobe.socket / hudprobe.service user units
+dev/                    generators (theme, color schemes, frames, Kvantum) and offscreen renderers
+installer.sh            the one entry point
+```
+
+## Install
+
+Needs Plasma 6, Rust, Qt 6 shader tools (`qsb`), Python 3 and, for the widget style,
+`kvantum`.
+
+```sh
+./installer.sh --dry-run    # show what the panel/wallpaper layout step would change
+./installer.sh              # build, link, apply theme/colors/frames/style, lay out panels
+./installer.sh --no-layout  # everything except touching panels and wallpapers
+./installer.sh --restore    # put back the saved Plasma layout, color scheme, frames and style
+```
+
+The layout step backs up your Plasma config to `~/.local/state/plasma-hud/` first, and so
+does every look setting it changes. It is safe to re-run.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The color schemes and Kvantum themes are generated on your
+machine from Breeze's and Kvantum's own files (see `dev/scheme_gen.py` and
+`dev/kvantum_gen.py`), so those outputs carry their sources' licenses and are not part of
+this repository.

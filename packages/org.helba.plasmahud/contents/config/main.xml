@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="palette" type="Int"><default>1</default></entry>
+    <entry name="colorMode" type="Int"><default>0</default></entry>
+    <entry name="mode" type="Int"><default>0</default></entry>
+    <entry name="launchers" type="StringList"><default>applications:systemsettings.desktop,preferred://filemanager</default></entry>
+    <entry name="taskAlign" type="Int"><default>1</default></entry>
+    <entry name="showActiveTitle" type="Bool"><default>false</default></entry>
+    <entry name="groupTasks" type="Bool"><default>true</default></entry>
+    <entry name="currentDesktopOnly" type="Bool"><default>true</default></entry>
+    <entry name="currentScreenOnly" type="Bool"><default>true</default></entry>
+    <entry name="livePreviews" type="Bool"><default>true</default></entry>
+    <entry name="ghostPanel" type="Bool"><default>false</default></entry>
+    <entry name="monoFont" type="String"><default>Hack</default></entry>
+    <entry name="labelFont" type="String"><default>Fira Sans Condensed</default></entry>
+    <entry name="serifFont" type="String"><default>Noto Serif</default></entry>
+    <entry name="badgeCpu" type="Bool"><default>true</default></entry>
+    <entry name="badgeMem" type="Bool"><default>true</default></entry>
+    <entry name="badgeGpu" type="Bool"><default>true</default></entry>
+    <entry name="badgeTemp" type="Bool"><default>false</default></entry>
+    <entry name="badgeNet" type="Bool"><default>false</default></entry>
+    <entry name="badgeUptime" type="Bool"><default>false</default></entry>
+    <entry name="sampleMs" type="Int"><default>1000</default></entry>
+    <entry name="glow" type="Double"><default>0.7</default></entry>
+    <entry name="scanlines" type="Bool"><default>false</default></entry>
+    <entry name="glitch" type="Bool"><default>false</default></entry>
+    <entry name="checkUpdates" type="Bool"><default>true</default></entry>
+    <entry name="gpuDevice" type="String"><default>gpu0</default></entry>
+    <entry name="terminalCommand" type="String"><default>konsole</default></entry>
+    <entry name="probeCommand" type="String"><default></default></entry>
+    <entry name="favoritesMigrated" type="Bool"><default>false</default></entry>
+  </group>
+</kcfg>

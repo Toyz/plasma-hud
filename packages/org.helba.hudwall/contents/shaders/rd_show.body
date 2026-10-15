@@ -1,0 +1,20 @@
+// Reaction-diffusion display: B channel as embossed tissue over the image, which it also refracts.
+layout(binding = 2) uniform sampler2D field;
+
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec2 tx = 1.0 / vec2(textureSize(field, 0));
+    float b = texture(field, uv).g;
+    float bx = texture(field, uv + vec2(tx.x, 0)).g - texture(field, uv - vec2(tx.x, 0)).g;
+    float by = texture(field, uv + vec2(0, tx.y)).g - texture(field, uv - vec2(0, tx.y)).g;
+    vec3 n = normalize(vec3(-bx * 5.0, -by * 5.0, 1.0));
+    float light = clamp(dot(n, normalize(vec3(-0.4, 0.5, 0.8))), 0.0, 1.0);
+
+    float m = smoothstep(0.12, 0.33, b);
+    vec3 tissue = mix(accent2.rgb * 0.45, accent.rgb, smoothstep(0.2, 0.5, b)) * (0.3 + light * 0.95)
+                + vec3(pow(light, 24.0) * 0.6);
+    vec3 img = hasImage > 0.5 ? texture(src, uv + vec2(bx, by) * 0.06 * intensity).rgb : vec3(0.015, 0.018, 0.03);
+    vec3 col = mix(img * (1.0 - 0.45 * intensity), tissue, m * intensity);
+    col += accent.rgb * smoothstep(0.06, 0.14, b) * (1.0 - m) * 0.5 * intensity;
+    fragColor = vec4(chromaDrift(vignette(col, uv), uv, chroma), 1.0) * qt_Opacity;
+}

@@ -1,0 +1,18 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Description": "Your wallpaper, alive: chroma drift, depth parallax, ink flow, pixel sort, growth, bloom, edge neon and more, driven by the image's own pixels",
+        "Icon": "preferences-desktop-wallpaper",
+        "Id": "org.helba.hudwall",
+        "License": "MIT",
+        "Name": "HUD Shader Wall",
+        "Version": "1.0.0"
+    },
+    "KPackageStructure": "Plasma/Wallpaper",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

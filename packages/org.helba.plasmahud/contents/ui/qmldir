@@ -1,0 +1,37 @@
+# Types of this directory. With a qmldir present Qt exports only what is listed here,
+# so every component must appear (installer.sh checks).
+singleton Bus 1.0 Bus.qml
+ActionButton 1.0 ActionButton.qml
+Badge 1.0 Badge.qml
+Bar 1.0 Bar.qml
+Clock 1.0 Clock.qml
+Ghost 1.0 Ghost.qml
+GlitchText 1.0 GlitchText.qml
+HudFrame 1.0 HudFrame.qml
+HudPanel 1.0 HudPanel.qml
+Hud 1.0 Hud.qml
+Island 1.0 Island.qml
+LauncherButton 1.0 LauncherButton.qml
+LauncherPanel 1.0 LauncherPanel.qml
+Launcher 1.0 Launcher.qml
+ProbeLink 1.0 ProbeLink.qml
+Pulse 1.0 Pulse.qml
+RingGauge 1.0 RingGauge.qml
+Section 1.0 Section.qml
+Sparkline 1.0 Sparkline.qml
+TaskMenu 1.0 TaskMenu.qml
+TaskPreview 1.0 TaskPreview.qml
+TaskStrip 1.0 TaskStrip.qml
+TaskTile 1.0 TaskTile.qml
+Workspaces 1.0 Workspaces.qml
+HackFrame 1.0 HackFrame.qml
+WindowFinder 1.0 WindowFinder.qml
+WarpScene 1.0 WarpScene.qml
+WarpOverlay 1.0 WarpOverlay.qml
+GaugesCard 1.0 GaugesCard.qml
+CoresCard 1.0 CoresCard.qml
+LoadCard 1.0 LoadCard.qml
+NetCard 1.0 NetCard.qml
+ProcsCard 1.0 ProcsCard.qml
+SystemCard 1.0 SystemCard.qml
+DeckCard 1.0 DeckCard.qml

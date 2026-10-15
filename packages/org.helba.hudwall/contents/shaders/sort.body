@@ -1,0 +1,27 @@
+// Pixel sort melt: in each column, runs of pixels brighter than a drifting threshold
+// smear downward; the threshold dips in bursts so the picture periodically melts and snaps back.
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec2 px = 1.0 / resolution;
+    float col_id = floor(uv.x * resolution.x / 2.0);
+    float burst = smoothstep(0.6, 1.0, sin(time * 0.35 + seed * 6.0) * 0.5 + 0.5);
+    float thr = mix(0.72, 0.35, burst * intensity);
+    float maxRun = mix(20.0, 140.0, hash(vec2(col_id, floor(time * 0.5))) * intensity);
+
+    float run = 0.0;
+    for (int i = 1; i <= 140; i++) {
+        if (float(i) > maxRun) break;
+        float l = luma(texture(src, uv - vec2(0.0, float(i) * px.y)).rgb);
+        if (l < thr) break;
+        run = float(i);
+    }
+    vec3 base = texture(src, uv).rgb;
+    vec3 col = base;
+    if (run > 0.0) {
+        // Sorted span: brightest at the head, stretched toward the tail.
+        float k = fract(uv.y * resolution.y / max(run, 1.0));
+        vec3 head = texture(src, uv - vec2(0.0, run * px.y)).rgb;
+        col = mix(head, base, smoothstep(0.0, 1.0, k * 0.6));
+    }
+    fragColor = vec4(chromaDrift(col, uv, chroma), 1.0) * qt_Opacity;
+}
