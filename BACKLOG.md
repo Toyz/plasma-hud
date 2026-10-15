@@ -50,7 +50,9 @@ Ordered. Check things off as they land.
       from data cells on open / unminimize and drain away on close / minimize (toward their task tile);
       replaces Glide and Squash
 - [x] Kvantum list items: .hack hover / press / selection, no white press flash; KDE apps translucent + blur
-- [ ] Alt+Tab window switcher (KWin/WindowSwitcher package) and a Super+Tab variant
+- [x] Alt+Tab party roster (helba-roster): member lines with diamond icon badges, cyan wash + gold
+      brackets on the current one, live view of it; Meta+Tab gate ring (helba-gatering): live windows on
+      a tilted ring around the Chaos Gate sigil
 - [ ] Lock screen
 - [ ] Login screen (SDDM)
 

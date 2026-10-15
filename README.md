@@ -24,6 +24,9 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   Windows assemble from data cells and drain away, in GLSL. It is the one small piece
   of JavaScript in the repo, because KWin only accepts third-party animation effects as
   scripts.
+- **Switchers**: Alt+Tab is the party roster (`helba-roster`), a list of windows with a
+  live view of the selected one. Meta+Tab is the gate ring (`helba-gatering`), with live
+  windows turning on a ring around the Chaos Gate sigil.
 - **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
   load and net traces, processes, system, command deck), together in a popup or one per
   desktop widget.
@@ -58,6 +61,7 @@ packages/
   aurorae/              window frames
 systemd/                hudprobe.socket / hudprobe.service user units
 dev/                    generators (theme, color schemes, frames, Kvantum) and offscreen renderers
+                        (switcher.sh renders the KWin switchers with a mock window list)
 installer.sh            the one entry point
 ```
 

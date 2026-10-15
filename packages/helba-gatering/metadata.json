@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "KWin/WindowSwitcher",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Description": "The gate ring (.hack, The World): live windows turning on a ring around the Chaos Gate sigil",
+        "Icon": "preferences-system-windows-switcher-coverswitch",
+        "Id": "helba-gatering",
+        "License": "MIT",
+        "Name": "Helba Gate Ring",
+        "Version": "1.0.0"
+    }
+}

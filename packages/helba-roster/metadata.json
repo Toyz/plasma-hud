@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "KWin/WindowSwitcher",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Description": "The party roster (.hack, The World): every window as a member line, with a live view of the one you are on",
+        "Icon": "preferences-system-windows-switcher-sidebar",
+        "Id": "helba-roster",
+        "License": "MIT",
+        "Name": "Helba Roster",
+        "Version": "1.0.0"
+    }
+}

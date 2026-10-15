@@ -57,6 +57,7 @@ package_dir() {
         Plasma/LookAndFeel) echo "$data/plasma/look-and-feel" ;;
         Plasma/Theme) echo "$data/plasma/desktoptheme" ;;
         KWin/Effect) echo "$data/kwin/effects" ;;
+        KWin/WindowSwitcher) echo "$data/kwin/tabbox" ;;
         *) return 1 ;;
     esac
 }
@@ -230,6 +231,43 @@ restore_gate() {
     say "window animations: restored"
 }
 
+# Window switchers: Alt+Tab is the party roster, Meta+Tab the gate ring (KWin's
+# "alternative" switcher). Shortcuts are set live through kglobalaccel; key codes are
+# Qt's: Meta+Tab = 0x10000000 + 0x01000001, Meta+Shift+Backtab adds Shift + Backtab.
+kga() { busctl --user call org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel "$@"; }
+
+apply_switchers() {
+    if [ "$(kreadconfig6 --file kwinrc --group TabBox --key LayoutName 2>/dev/null)" != helba-roster ]; then
+        mkdir -p "$state"
+        printf '%s\n%s\n' "$(kreadconfig6 --file kwinrc --group TabBox --key LayoutName 2>/dev/null)" \
+            "$(kreadconfig6 --file kwinrc --group TabBoxAlternative --key LayoutName 2>/dev/null)" > "$state/switchers.before"
+    fi
+    kwriteconfig6 --file kwinrc --group TabBox --key LayoutName helba-roster
+    kwriteconfig6 --file kwinrc --group TabBoxAlternative --key LayoutName helba-gatering
+    a="Walk Through Windows Alternative"
+    kga setForeignShortcutKeys 'asa(ai)' 4 kwin "$a" KWin "$a" 1 4 285212673 0 0 0 >/dev/null || true
+    kga setForeignShortcutKeys 'asa(ai)' 4 kwin "$a (Reverse)" KWin "$a (Reverse)" 1 4 318767106 0 0 0 >/dev/null || true
+    qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
+    say "switchers: Alt+Tab party roster, Meta+Tab gate ring"
+}
+
+restore_switchers() {
+    [ -f "$state/switchers.before" ] || return 0
+    main=$(sed -n 1p "$state/switchers.before")
+    alt=$(sed -n 2p "$state/switchers.before")
+    kwriteconfig6 --file kwinrc --group TabBox --key LayoutName "${main:-thumbnail_grid}"
+    if [ -n "$alt" ]; then
+        kwriteconfig6 --file kwinrc --group TabBoxAlternative --key LayoutName "$alt"
+    else
+        kwriteconfig6 --file kwinrc --group TabBoxAlternative --key LayoutName --delete
+    fi
+    a="Walk Through Windows Alternative"
+    kga setForeignShortcutKeys 'asa(ai)' 4 kwin "$a" KWin "$a" 0 >/dev/null || true
+    kga setForeignShortcutKeys 'asa(ai)' 4 kwin "$a (Reverse)" KWin "$a (Reverse)" 0 >/dev/null || true
+    qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
+    say "switchers: restored"
+}
+
 restore_scheme() {
     [ -f "$state/colorscheme.before" ] || return 0
     plasma-apply-colorscheme "$(cat "$state/colorscheme.before")" >/dev/null \
@@ -287,6 +325,7 @@ case "${1:-}" in
         restore_frames
         restore_kvantum
         restore_gate
+        restore_switchers
         ;;
     --no-layout)
         build
@@ -311,6 +350,7 @@ case "${1:-}" in
         apply_frames
         apply_kvantum
         apply_gate
+        apply_switchers
         units
         "$hudctl" layout
         ;;
