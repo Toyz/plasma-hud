@@ -74,7 +74,7 @@ Ordered. Check things off as they land.
 - [x] .hack identity (The World) across the widget: bar islands, task buttons, launcher emblem, clock,
       pulse, HUD popup, task preview + menu (glitch / scanlines / chamfers removed)
 - [x] .hack for what is left: Plasma theme popups, switchers, lock, login
-- [ ] Splash screen at login (ksplash, currently Ant-Dark's)
+- [x] Splash screen at login (packages/splash, org.helba.world via ksplashrc): the Chaos Gate draws in by stage
 - [ ] Logout / shutdown screen
 - [ ] Tray icons for media playback and brightness (still Papirus)
 

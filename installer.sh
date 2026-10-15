@@ -388,6 +388,24 @@ restore_icons() {
     say "icons: ${prev:-breeze-dark} (restored)"
 }
 
+# Login splash: packages/splash is a look-and-feel package (org.helba.world) that only
+# carries the splash; ksplashrc picks it, so the global theme stays as it is.
+apply_splash() {
+    current=$(kreadconfig6 --file ksplashrc --group KSplash --key Theme 2>/dev/null || true)
+    [ "$current" = org.helba.world ] && { say "splash: Helba World (kept)"; return; }
+    mkdir -p "$state"
+    if [ -f "$config/ksplashrc" ]; then cp "$config/ksplashrc" "$state/ksplashrc.before"; else : > "$state/ksplashrc.before"; fi
+    kwriteconfig6 --file ksplashrc --group KSplash --key Engine KSplashQML
+    kwriteconfig6 --file ksplashrc --group KSplash --key Theme org.helba.world
+    say "splash: Helba World (was ${current:-the global theme's})"
+}
+
+restore_splash() {
+    [ -f "$state/ksplashrc.before" ] || return 0
+    if [ -s "$state/ksplashrc.before" ]; then cp "$state/ksplashrc.before" "$config/ksplashrc"; else rm -f "$config/ksplashrc"; fi
+    say "splash: restored"
+}
+
 restore_scheme() {
     [ -f "$state/colorscheme.before" ] || return 0
     plasma-apply-colorscheme "$(cat "$state/colorscheme.before")" >/dev/null \
@@ -455,6 +473,7 @@ case "${1:-}" in
         restore_lockscreen
         restore_gtk
         restore_icons
+        restore_splash
         ;;
     --no-layout)
         build
@@ -487,6 +506,7 @@ case "${1:-}" in
         apply_lockscreen
         apply_gtk
         apply_icons
+        apply_splash
         units
         "$hudctl" layout
         ;;

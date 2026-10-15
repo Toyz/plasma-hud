@@ -35,6 +35,8 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
 - **Login screen** (`packages/sddm/helba-world`): SDDM theme with the gate sigil and "The
   World" plate (user diamonds, session, power). Install with `./installer.sh --sddm`
   (uses sudo; copies your screen 0 wallpaper in, since SDDM cannot read your home).
+- **Splash** (`packages/splash`): while the session loads, the Chaos Gate draws itself in
+  stage by stage under "The World", ending on the warp's midnight.
 - **Arrival**: the gate-in plays across every screen when you log in and when you unlock.
 - **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
   load and net traces, processes, system, command deck), together in a popup or one per
