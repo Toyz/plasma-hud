@@ -73,7 +73,10 @@ Ordered. Check things off as they land.
 ## After the backlog
 - [x] .hack identity (The World) across the widget: bar islands, task buttons, launcher emblem, clock,
       pulse, HUD popup, task preview + menu (glitch / scanlines / chamfers removed)
-- [ ] .hack for what is left: Plasma theme popups, switchers, lock, login
+- [x] .hack for what is left: Plasma theme popups, switchers, lock, login
+- [ ] Splash screen at login (ksplash, currently Ant-Dark's)
+- [ ] Logout / shutdown screen
+- [ ] Tray icons for media playback and brightness (still Papirus)
 
 ## Pending outside this repo
 - [x] muralist: hudwall-aware wallpaper setter (b395269); verified live on all three screens
