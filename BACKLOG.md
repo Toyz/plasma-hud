@@ -68,7 +68,7 @@ Ordered. Check things off as they land.
       studs and a diamond emblem per place, trash, start-here; inherits Papirus-Dark for the rest
 - [x] Icons v2: .hack tray / status icons (Wi-Fi, wired, VPN, volume, microphone, battery, Bluetooth,
       airplane mode), recolored live from the color scheme
-- [ ] Icons v3: mimetypes
+- [x] Icons v3: file types as .hack data tablets (every Papirus-Dark mimetype name, 18 categories, type labels)
 
 ## After the backlog
 - [x] .hack identity (The World) across the widget: bar islands, task buttons, launcher emblem, clock,

@@ -58,8 +58,9 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
 
   - icons (`HelbaWorld`): glass folders with a bronze rim and diamond emblems for every
     place, the trash and start-here; .hack tray icons (Wi-Fi, wired, VPN, volume,
-    microphone, battery, Bluetooth) that Plasma recolors from the scheme; everything else
-    comes from Papirus-Dark. App tray icons sent as pictures (Discord, Docker...) are
+    microphone, battery, Bluetooth, media, brightness, Night Light) that Plasma recolors
+    from the scheme; every file type as a "data tablet" (glass page, bronze rim, category
+    glyph, the type's short name); everything else comes from Papirus-Dark. App tray icons sent as pictures (Discord, Docker...) are
     tinted gold by the right island instead, since no icon theme can reach them
 
   Everything follows the KDE color scheme. Switch between Helba World and Helba World

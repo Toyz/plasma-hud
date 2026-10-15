@@ -479,12 +479,193 @@ for n, text in STATUS.items():
     write(f"scalable/status/{n}.svg", text)
 print(f"{len(STATUS)} status icons")
 
+
+# ------------------------------------------------------------------ file types (v3)
+# Every mimetype name the inherited theme (Papirus-Dark) has gets a .hack "data tablet":
+# a glass page with a folded corner, bronze rim, studs, a category accent bar, the
+# category's glyph in a diamond, and the type's short name in gold. Exact names win
+# over generic fallbacks in icon lookup, so each specific name must be shipped.
+
+import re
+
+PAPIRUS = os.path.expanduser("~/.local/share/icons/Papirus-Dark/64x64/mimetypes")
+
+
+def g_grid():
+    return '<path d="M-5,-4.5 H5 V4.5 H-5 Z M-5,-1.5 H5 M-5,1.5 H5 M-1.6,-4.5 V4.5 M1.8,-4.5 V4.5"/>'
+
+
+def g_bars():
+    return '<path d="M-5,4.5 H5 M-3.6,4.5 V0.5 M-0.4,4.5 V-3.5 M2.8,4.5 V-1.5"/>'
+
+
+def g_book():
+    return '<path d="M0,-3.6 C-2,-5 -4.2,-5 -5.4,-4.4 V4 C-4.2,3.4 -2,3.4 0,4.8 C2,3.4 4.2,3.4 5.4,4 V-4.4 C4.2,-5 2,-5 0,-3.6 Z M0,-3.6 V4.8"/>'
+
+
+def g_box():
+    return '<path d="M-5,-2.4 L0,-5 L5,-2.4 V3 L0,5.6 L-5,3 Z M-5,-2.4 L0,0.2 L5,-2.4 M0,0.2 V5.6"/>'
+
+
+def g_disc():
+    return '<circle cx="0" cy="0" r="5.2"/><circle cx="0" cy="0" r="1.4" fill="currentColor" stroke="none"/>'
+
+
+def g_font():
+    return ('<text x="0" y="3.8" text-anchor="middle" font-family="Noto Serif, serif" font-size="10" '
+            'fill="currentColor" stroke="none">Aa</text>')
+
+
+def g_diamond_dot():
+    return '<path d="M0,-4.6 L4.6,0 L0,4.6 L-4.6,0 Z" fill="currentColor" fill-opacity="0.35"/>'
+
+
+CATS = {
+    #           glyph            accent
+    "code":    (g_code(),        "#8fe3ff"),
+    "doc":     (g_lines(),       GOLD_LIGHT),
+    "sheet":   (g_grid(),        "#7fd6a8"),
+    "slides":  (g_bars(),        "#ffb36b"),
+    "book":    (g_book(),        "#ff8f8f"),
+    "image":   (g_picture(),     "#7fd6a8"),
+    "audio":   (g_note(),        "#d79bff"),
+    "video":   (g_play(),        "#ff8f8f"),
+    "archive": (g_stack(),       GOLD_LIGHT),
+    "package": (g_box(),         GOLD_LIGHT),
+    "disc":    (g_disc(),        "#8fe3ff"),
+    "exec":    (g_letter("Ξ"),   "#8fe3ff"),
+    "font":    (g_font(),        INK),
+    "web":     (g_globe(),       "#8fe3ff"),
+    "key":     (g_letter("Λ"),   GOLD_LIGHT),
+    "game":    (g_pad(),         "#ff9fd0"),
+    "design":  (g_letter("Δ"),   "#ffb36b"),
+    "generic": (g_diamond_dot(), "#8d98b6"),
+}
+
+RULES = [
+    ("sheet", r"wps-office-(xls|xlt|et)|kmymoney"),
+    ("slides", r"wps-office-(dps|dpt|pot|pps|ppt)"),
+    ("doc", r"wps-office-(wps|wpt|doc|dot)|^message-|^multipart-|ms-publisher|mswrite|applix-word|xopp|xoj"),
+    ("book", r"cb7|cbt|cbr"),
+    ("key", r"keepass|kdbx"),
+    ("game", r"love-game|world-of-goo|gnonogram"),
+    ("game", r"nintendo|gameboy|game-boy|wii|gamecube|genesis|megadrive|sega|snes|nes-rom|n64|wonderswan|"
+             r"neo-?geo|atari|pce|pc-engine|virtual-boy|lynx|nds|3ds|gba|\brom\b|-rom$|\.rom$"),
+    ("design", r"acad|dwg|dxf|kicad|openboardview|illustrator|afdesigner|gvdesign|scribus|visio|mxfile|"
+               r"sweethome3d|blender|freecad|fcstd|\bstl\b|-stl$|3d|sketch|xara|coreldraw|krita|inkscape|librecad"),
+    ("web", r"kml|kmz|gpx|oziexplorer|igc|nmea|ant\.fit|google-earth|geojson|osm"),
+    ("audio", r"bitwig|ableton|flp|midi|tracker|shorten|-mod$|xm$|it$|ram$|realaudio"),
+    ("video", r"realmedia|-asf$|wpl|flash\.movie|shockwave"),
+    ("doc", r"ms-word|wordperfect|hwp|oasis-text|openoffice4-.*text|mbox|tnef|winhlp|chm|help"),
+    ("sheet", r"ms-access|sqlite|\bdb\b|dbf|spss|mdb|database|fusiontable"),
+    ("exec", r"wine|x-ms-|\bexe\b|-exe$|msi|bat$|cmd$|extension"),
+    ("disc", r"vmware|squashfs|efi\.(img|iso)|x-content-|blank-cd|dvd|bluray"),
+    ("code", r"mathematica|wolfram|matlab|maple|dart|wasm|cbor|relaxng|-pkix-|tcpdump|pcap"),
+    ("image", r"^image-|x-image|-image-|^application-x-(krita|gimp|xcf|inkscape)|svg|photoshop|psd|raw"),
+    ("audio", r"^audio-|x-audio|sound|music|playlist|mpegurl|ogg$"),
+    ("video", r"^video-|x-video|matroska|mp4|webm|flv|avi|quicktime"),
+    ("font", r"font|truetype|opentype|woff"),
+    ("book", r"pdf|epub|djvu|ebook|mobi|comicbook|cbz|cbr|fictionbook|postscript"),
+    ("sheet", r"spreadsheet|excel|calc|csv|sheet|tab-separated|gnumeric"),
+    ("slides", r"presentation|powerpoint|impress|slides|keynote"),
+    ("disc", r"iso9660|cd-image|disk-image|diskimage|vmdk|vdi|qcow|virtualbox|vbox|raw-disk|apple-diskimage"),
+    ("package", r"\bdeb\b|-deb$|rpm|archlinux|flatpak|snap|appimage|package|java-archive|jar$|msi|apk|x-ruby-gem|python-wheel"),
+    ("archive", r"zip|tar|7z|rar|xz|gzip|bzip|lzma|lzip|zstd|compress|cpio|-ar$|archive|cabinet|lha|arj|ace|stuffit"),
+    ("key", r"cert|pkcs|pem|x509|pgp|gpg|keyring|ssh|key$|-key-|keystore"),
+    ("exec", r"executable|sharedlib|sharedobject|-object$|elf|ms-dos|msdownload|x-desktop|desktop$|bytecode|dll|appliance"),
+    ("web", r"html|xhtml|css|web|php|asp|jsp|url|link|torrent|bittorrent"),
+    ("doc", r"msword|wordprocessing|opendocument\.text|text-plain|plain$|rtf|abiword|office-document|writer|"
+            r"x-office-document|markdown|text-x-tex|latex|log$|readme|text-x-generic|txt|^text-x-changelog|document"),
+    ("code", r"^text-|script|source|python|ruby|perl|java|json|yaml|toml|xml|sql|rust|golang|kotlin|swift|lua|"
+             r"haskell|scala|csharp|cpp|c\+\+|chdr|csrc|makefile|cmake|qml|patch|diff|config|ini|x-ipynb|jupyter"),
+]
+
+LABELS = {
+    "python": "PY", "python3": "PY", "rust": "RS", "javascript": "JS", "typescript": "TS", "csrc": "C",
+    "c": "C", "chdr": "H", "c++src": "C++", "cpp": "C++", "c++hdr": "HPP", "java": "JAVA", "go": "GO",
+    "shellscript": "SH", "sh": "SH", "json": "JSON", "yaml": "YML", "toml": "TOML", "xml": "XML",
+    "html": "HTML", "css": "CSS", "markdown": "MD", "pdf": "PDF", "zip": "ZIP", "tar": "TAR",
+    "compressed-tar": "TGZ", "7z-compressed": "7Z", "rar": "RAR", "iso9660-image": "ISO", "cd-image": "ISO",
+    "deb": "DEB", "rpm": "RPM", "png": "PNG", "jpeg": "JPG", "gif": "GIF", "svg+xml": "SVG", "webp": "WEBP",
+    "mpeg": "MP3", "mp3": "MP3", "flac": "FLAC", "ogg": "OGG", "wav": "WAV", "mp4": "MP4", "matroska": "MKV",
+    "webm": "WEBM", "plain": "TXT", "sql": "SQL", "lua": "LUA", "ruby": "RB", "perl": "PL", "php": "PHP",
+    "kotlin": "KT", "swift": "SWIFT", "qml": "QML", "cmake": "CMAKE", "makefile": "MAKE", "patch": "DIFF",
+    "diff": "DIFF", "csv": "CSV", "epub+zip": "EPUB", "x-xz": "XZ", "xz": "XZ", "zstd": "ZST", "gzip": "GZ",
+    "bzip": "BZ2", "executable": "EXE", "sharedlib": "SO", "msword": "DOC", "msexcel": "XLS",
+    "ms-powerpoint": "PPT", "torrent": "TOR", "bittorrent": "TOR", "appimage": "APP", "flatpak": "PAK",
+    "java-archive": "JAR", "desktop": "DESK", "ipynb+json": "IPY", "tex": "TEX", "log": "LOG",
+    "spreadsheet": "XLS", "presentation": "PPT", "document": "DOC", "octet-stream": "BIN", "blender": "BLND",
+    "cd-image": "ISO", "executable": "EXE", "generic": "",
+}
+
+
+def classify(name):
+    for cat, pat in RULES:
+        if re.search(pat, name):
+            return cat
+    return "generic"
+
+
+def label_for(name):
+    for key in sorted(LABELS, key=len, reverse=True):
+        if name.endswith("-" + key) or name.endswith("." + key) or name.endswith("x-" + key):
+            return LABELS[key]
+    tail = re.split(r"[-.+]", name)[-1]
+    tail = re.sub(r"^x", "", tail) if tail.startswith("x") and len(tail) > 3 else tail
+    return tail[:4].upper() if tail and tail not in ("generic", "x") else ""
+
+
+def tablet(glyph, accent, label):
+    defs = (f'<linearGradient id="page" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{NAVY_TOP}"/><stop offset="1" stop-color="{NAVY}"/></linearGradient>')
+    b = [f'<path d="M14,5 H40 L51,16 V59 H14 Z" fill="url(#page)" stroke="{GOLD}" stroke-width="1.5" stroke-linejoin="round"/>',
+         f'<path d="M40,5 V16 H51" fill="#26346b" stroke="{GOLD}" stroke-width="1.2" stroke-linejoin="round"/>',
+         f'<rect x="16.5" y="8" width="2.2" height="48" fill="{accent}" fill-opacity="0.85"/>']
+    for x, y in [(14, 5), (14, 59), (51, 59)]:
+        b.append(diamond(x, y, 2.4, fill=GOLD_LIGHT))
+    cy = 27 if label else 32
+    b.append(diamond(33, cy, 10.5, fill=NAVY_DEEP, stroke=CYAN, sw=1.2, op=0.9))
+    b.append(f'<g transform="translate(33,{cy}) scale(0.78)" color="{accent}" fill="none" stroke="{accent}" '
+             f'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{glyph}</g>')
+    if label:
+        size = 10 if len(label) <= 3 else 8.2
+        b.append(f'<text x="33" y="52" text-anchor="middle" font-family="Noto Serif, serif" font-size="{size}" '
+                 f'letter-spacing="0.6" fill="{GOLD_LIGHT}">{label}</text>')
+    return svg(64, "".join(b), defs)
+
+
+def tablet16(accent):
+    b = [f'<path d="M3,1.5 H9.5 L13,5 V14.5 H3 Z" fill="{NAVY_TOP}" stroke="{GOLD}" stroke-width="1"/>',
+         f'<rect x="4.4" y="3" width="1.4" height="10" fill="{accent}"/>',
+         diamond(9, 9.5, 2.4, fill=accent)]
+    return svg(16, "".join(b))
+
+
+mime_names = sorted(f[:-4] for f in os.listdir(PAPIRUS) if f.endswith(".svg")) if os.path.isdir(PAPIRUS) else []
+for extra in ["inode-directory", "text-x-generic", "application-x-generic", "unknown", "application-octet-stream", "x-office-document",
+              "x-office-spreadsheet", "x-office-presentation", "package-x-generic", "audio-x-generic",
+              "video-x-generic", "image-x-generic", "font-x-generic", "text-x-script", "application-x-executable"]:
+    if extra not in mime_names:
+        mime_names.append(extra)
+cat_count = {}
+for n in mime_names:
+    if n in ("inode-directory", "inode-x-directory", "folder"):
+        write(f"scalable/mimetypes/{n}.svg", folder(None))
+        write(f"16x16/mimetypes/{n}.svg", folder16(CYAN))
+        continue
+    cat = classify(n)
+    glyph, accent = CATS[cat]
+    write(f"scalable/mimetypes/{n}.svg", tablet(glyph, accent, label_for(n) if cat != "generic" or n.count("-") > 1 else ""))
+    write(f"16x16/mimetypes/{n}.svg", tablet16(accent))
+    cat_count[cat] = cat_count.get(cat, 0) + 1
+print(f"{len(mime_names)} file-type icons:", ", ".join(f"{k} {v}" for k, v in sorted(cat_count.items(), key=lambda kv: -kv[1])))
+
 write("index.theme", """[Icon Theme]
 Name=HelbaWorld
 Comment=.hack (The World): glass folders with a bronze rim and diamond emblems; everything else from your icon theme
 Inherits=Papirus-Dark,breeze-dark,hicolor
 Example=folder
-Directories=16x16/places,scalable/places,scalable/status
+Directories=16x16/places,16x16/mimetypes,scalable/places,scalable/status,scalable/mimetypes
 
 [16x16/places]
 Context=Places
@@ -493,6 +674,18 @@ Type=Fixed
 
 [scalable/places]
 Context=Places
+Size=64
+MinSize=16
+MaxSize=512
+Type=Scalable
+
+[16x16/mimetypes]
+Context=MimeTypes
+Size=16
+Type=Fixed
+
+[scalable/mimetypes]
+Context=MimeTypes
 Size=64
 MinSize=16
 MaxSize=512

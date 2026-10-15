@@ -3,7 +3,7 @@ Name=HelbaWorld
 Comment=.hack (The World): glass folders with a bronze rim and diamond emblems; everything else from your icon theme
 Inherits=Papirus-Dark,breeze-dark,hicolor
 Example=folder
-Directories=16x16/places,scalable/places,scalable/status
+Directories=16x16/places,16x16/mimetypes,scalable/places,scalable/status,scalable/mimetypes
 
 [16x16/places]
 Context=Places
@@ -12,6 +12,18 @@ Type=Fixed
 
 [scalable/places]
 Context=Places
+Size=64
+MinSize=16
+MaxSize=512
+Type=Scalable
+
+[16x16/mimetypes]
+Context=MimeTypes
+Size=16
+Type=Fixed
+
+[scalable/mimetypes]
+Context=MimeTypes
 Size=64
 MinSize=16
 MaxSize=512
