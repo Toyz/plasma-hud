@@ -4,6 +4,9 @@
 #   ./installer.sh              build, link packages, enable units, apply the panel/wallpaper layout
 #   ./installer.sh --no-layout  everything except touching panels and wallpapers
 #   ./installer.sh --dry-run    print what the layout step would change, change nothing
+#   ./installer.sh --sddm       install the Helba World login screen (asks for sudo)
+#   ./installer.sh --restore-sddm
+#                               go back to the previous login screen (asks for sudo)
 #   ./installer.sh --restore [DIR]
 #                               put back the Plasma config saved before the last layout run
 #                               (or DIR from ~/.local/state/plasma-hud/)
@@ -295,6 +298,45 @@ restore_lockscreen() {
     say "lock screen: Plasma default from the next login"
 }
 
+# Login screen (SDDM). It runs as the sddm user and cannot read your home, so the
+# theme is copied to /usr/share/sddm/themes with screen 0's wallpaper as its
+# background, light or dark to match the current color scheme. Needs root.
+sddm_dest=/usr/share/sddm/themes/helba-world
+sddm_conf=/etc/sddm.conf.d/helba-world.conf
+
+install_sddm() {
+    ensure_hudctl
+    tmp=$(mktemp -d)
+    cp -r "$root/packages/sddm/helba-world/." "$tmp/"
+    img=$("$hudctl" wallpaper 0 2>/dev/null || true)
+    if [ -n "$img" ] && [ -f "$img" ]; then
+        ext=${img##*.}
+        cp "$img" "$tmp/background.$ext"
+        sed -i "s|^background=.*|background=background.$ext|" "$tmp/theme.conf"
+        say "login background: $img"
+    else
+        sed -i "s|^background=.*|background=|" "$tmp/theme.conf"
+        say "login background: none found, using the glass color"
+    fi
+    case "$(kreadconfig6 --group General --key ColorScheme 2>/dev/null)" in
+        *Light*) sed -i "s|^light=.*|light=1|" "$tmp/theme.conf" ;;
+    esac
+    say "installing $sddm_dest and $sddm_conf (sudo)"
+    sudo install -d -m 755 "$sddm_dest" /etc/sddm.conf.d
+    sudo cp -r "$tmp/." "$sddm_dest/"
+    sudo chmod -R a+rX "$sddm_dest"
+    printf '# plasma-hud: Helba World login screen\n[Theme]\nCurrent=helba-world\n' | sudo tee "$sddm_conf" >/dev/null
+    rm -rf "$tmp"
+    say "login screen: Helba World (shows at the next login)"
+}
+
+restore_sddm() {
+    say "removing $sddm_conf and $sddm_dest (sudo)"
+    sudo rm -f "$sddm_conf"
+    sudo rm -rf "$sddm_dest"
+    say "login screen: back to the system default"
+}
+
 restore_scheme() {
     [ -f "$state/colorscheme.before" ] || return 0
     plasma-apply-colorscheme "$(cat "$state/colorscheme.before")" >/dev/null \
@@ -345,6 +387,12 @@ case "${1:-}" in
         ensure_hudctl
         "$hudctl" layout --dry-run
         ;;
+    --sddm)
+        install_sddm
+        ;;
+    --restore-sddm)
+        restore_sddm
+        ;;
     --restore)
         ensure_hudctl
         if [ -n "${2:-}" ]; then "$hudctl" restore "$2"; else "$hudctl" restore; fi
@@ -384,7 +432,7 @@ case "${1:-}" in
         "$hudctl" layout
         ;;
     *)
-        sed -n '2,13s/^# \{0,1\}//p' "$0"
+        sed -n '2,16s/^# \{0,1\}//p' "$0"
         exit 2
         ;;
 esac

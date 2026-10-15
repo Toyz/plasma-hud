@@ -27,6 +27,7 @@ fn main() -> ExitCode {
     let result = match args.first().map(String::as_str) {
         Some("layout") => cmd_layout(&args[1..]),
         Some("restore") => cmd_restore(args.get(1).map(PathBuf::from)),
+        Some("wallpaper") => cmd_wallpaper(args.get(1).map(String::as_str)),
         _ => Err(usage()),
     };
     match result {
@@ -39,7 +40,7 @@ fn main() -> ExitCode {
 }
 
 fn usage() -> String {
-    "usage: hudctl layout [--dry-run] [--config DIR] | hudctl restore [BACKUP_DIR]".into()
+    "usage: hudctl layout [--dry-run] [--config DIR] | hudctl restore [BACKUP_DIR] | hudctl wallpaper [SCREEN]".into()
 }
 
 fn home() -> PathBuf {
@@ -108,6 +109,31 @@ fn cmd_layout(args: &[String]) -> Result<(), String> {
         say("layout applied. Undo with: hudctl restore");
     }
     Ok(())
+}
+
+// ------------------------------------------------------------------ wallpaper
+
+/// Print the image file shown on a screen's desktop (default: screen 0), from hudwall
+/// or Plasma's image wallpaper. Used to give the SDDM theme the same picture.
+fn cmd_wallpaper(screen: Option<&str>) -> Result<(), String> {
+    let screen: i32 = screen.unwrap_or("0").parse().map_err(|_| usage())?;
+    let cfg = load(&config_dir())?;
+    let image = wallpaper_image(&cfg.applets, screen).ok_or_else(|| format!("no image wallpaper on screen {screen}"))?;
+    println!("{image}");
+    Ok(())
+}
+
+fn wallpaper_image(doc: &Doc, screen: i32) -> Option<String> {
+    plasma::containments(doc)
+        .into_iter()
+        .filter(|c| !c.is_panel() && c.screen == screen)
+        .find_map(|c| {
+            ["org.helba.hudwall", "org.kde.image"].iter().find_map(|plugin| {
+                let group = ["Containments", c.id.as_str(), "Wallpaper", plugin, "General"];
+                doc.get(&group, "Image").filter(|i| !i.is_empty())
+            })
+        })
+        .map(|i| i.strip_prefix("file://").unwrap_or(&i).to_string())
 }
 
 fn load(dir: &Path) -> Result<Config, String> {

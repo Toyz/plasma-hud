@@ -57,7 +57,11 @@ Ordered. Check things off as they land.
       turning sigil; any key raises "The World" log-in plate (avatar diamond, glass field, shake on
       failure). Loaded via PLASMA_DEFAULT_SHELL in KWin's unit only (Plasma 6.7 has no look-and-feel
       lock screens)
-- [ ] Login screen (SDDM)
+- [x] Login screen (SDDM, packages/sddm/helba-world): sigil + glass plate, user diamonds, session,
+      power keycaps; `./installer.sh --sddm` installs it with screen 0's wallpaper (sudo)
+- [x] Gate-in arrival on login (once per session) and on unlock (ScreenSaver.ActiveChanged)
+- [ ] Helba World for GTK2 and GTK3 apps (and GTK4 / libadwaita colors)
+- [ ] .hack-inspired icon theme (apps, places, actions), for Qt and GTK
 
 ## After the backlog
 - [x] .hack identity (The World) across the widget: bar islands, task buttons, launcher emblem, clock,

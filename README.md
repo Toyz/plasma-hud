@@ -32,6 +32,10 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   lock screens from a shell package, so this is a lock-screen-only shell package that the
   screen locker picks up through `PLASMA_DEFAULT_SHELL`, set for KWin alone (the desktop
   shell is untouched). It applies from the next login.
+- **Login screen** (`packages/sddm/helba-world`): SDDM theme with the gate sigil and "The
+  World" plate (user diamonds, session, power). Install with `./installer.sh --sddm`
+  (uses sudo; copies your screen 0 wallpaper in, since SDDM cannot read your home).
+- **Arrival**: the gate-in plays across every screen when you log in and when you unlock.
 - **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
   load and net traces, processes, system, command deck), together in a popup or one per
   desktop widget.
@@ -81,6 +85,7 @@ Needs Plasma 6, Rust, Qt 6 shader tools (`qsb`), Python 3 and, for the widget st
 ./installer.sh              # build, link, apply theme/colors/frames/style, lay out panels
 ./installer.sh --no-layout  # everything except touching panels and wallpapers
 ./installer.sh --restore    # put back the saved Plasma layout, color scheme, frames and style
+./installer.sh --sddm       # install the login screen (sudo); --restore-sddm removes it
 ```
 
 The layout step backs up your Plasma config to `~/.local/state/plasma-hud/` first, and so

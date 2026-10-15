@@ -5,6 +5,7 @@ import org.kde.layershell as LayerShell
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.taskmanager as TaskManager
+import org.kde.plasma.workspace.dbus as DBus
 import "../../../org.helba.plasmahud/contents/ui"
 
 // Chaos Gate widget. Invisible in the panel; its global shortcut (Meta+Space, set by
@@ -115,6 +116,32 @@ PlasmoidItem {
         function onLightChanged() { root.syncFrames(); }
     }
     Timer { running: true; interval: 3000; onTriggered: root.syncFrames() }
+
+    // ------------------------------------------------------------ arrival
+
+    // Gate in when you arrive: on unlock (the screen locker's ActiveChanged(false)) and
+    // once per login (a marker in the runtime dir, so restarting plasmashell does not
+    // replay it). Shows the area you land in.
+    function arriveHere() {
+        const i = Math.max(0, vd.desktopIds.indexOf(vd.currentDesktop));
+        const parts = ctx.splitArea(areaName(i));
+        ctx.arrive(parts[0], parts[1]);
+    }
+    DBus.SignalWatcher {
+        busType: DBus.BusType.Session
+        service: "org.freedesktop.ScreenSaver"
+        path: "/ScreenSaver"
+        iface: "org.freedesktop.ScreenSaver"
+        function dbusActiveChanged(active) {
+            if (!active) root.arriveHere();
+        }
+    }
+    Timer {
+        running: true
+        interval: 600
+        onTriggered: ctx.ask("f=\"${XDG_RUNTIME_DIR:-/tmp}/plasma-hud-arrived\"; [ -e \"$f\" ] || { : > \"$f\"; echo first; }",
+            out => { if (out === "first") root.arriveHere(); })
+    }
 
     function areaName(i) {
         const n = String(vd.desktopNames[i] || "");

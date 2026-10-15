@@ -46,6 +46,23 @@ Item {
         anim.restart();
     }
 
+    // Arrival only (login, unlock): start covered at the peak, then gate in.
+    function arrive(g, ti) {
+        if (running) return;
+        glyph = g || "";
+        title = ti || "";
+        action = null;
+        t = 1;
+        running = true;
+        arriveAnim.restart();
+    }
+    SequentialAnimation {
+        id: arriveAnim
+        PauseAnimation { duration: 350 }
+        NumberAnimation { target: warp; property: "t"; from: 1; to: 2; duration: 2100; easing.type: Easing.Linear }
+        ScriptAction { script: warp.running = false }
+    }
+
     SequentialAnimation {
         id: anim
         NumberAnimation { target: warp; property: "t"; from: 0; to: 1; duration: 1400; easing.type: Easing.InOutSine }

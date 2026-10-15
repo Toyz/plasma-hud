@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=Helba World
+Description=.hack (The World) login: gate sigil, gold-trimmed glass, serif clock
+Author=helba
+Email=ai@helba.ai
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=helba-world
+Theme-API=2.0
+QtVersion=6

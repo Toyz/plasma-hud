@@ -202,6 +202,16 @@ Item {
         active: false
         sourceComponent: WarpOverlay { hud: warpLoader.ctx }
     }
+    function arrive(glyph, title) {
+        warpLoader.active = true;
+        if (warpLoader.item) warpLoader.item.arrive(glyph, title);
+    }
+    // Run a command and hand its trimmed stdout to fn.
+    property var waiting: ({})
+    function ask(cmd, fn) {
+        waiting[cmd] = fn;
+        exec.run(cmd);
+    }
     function warp(glyph, title, fn) {
         warpLoader.active = true;
         if (warpLoader.item) warpLoader.item.play(glyph, title, fn);
@@ -271,6 +281,12 @@ Item {
         onNewData: (source, data) => {
             disconnectSource(source);
             const out = (data["stdout"] || "").trim();
+            const waiter = hud.waiting[source];
+            if (waiter) {
+                delete hud.waiting[source];
+                waiter(out);
+                return;
+            }
             if (source === hud.probeCmd) {
                 try {
                     hud.probe = JSON.parse(out);
