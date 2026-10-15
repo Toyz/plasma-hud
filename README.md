@@ -51,6 +51,9 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   - a GTK theme (`HelbaWorld`): Breeze with the same .hack trim for GTK 3 apps, Breeze
     Dark with Helba colors for GTK 2
 
+  - icons (`HelbaWorld`): glass folders with a bronze rim and diamond emblems for every
+    place, the trash and start-here; everything else comes from Papirus-Dark
+
   Everything follows the KDE color scheme. Switch between Helba World and Helba World
   Light in System Settings and the whole rice flips.
 - **hudprobe**: socket-activated telemetry daemon (top processes, load, IP, pacman state).

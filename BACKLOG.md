@@ -64,7 +64,9 @@ Ordered. Check things off as they land.
       popovers, tooltips; cyan wash + gold brackets on selection; gold tabs, checks, scrollbars),
       colors live from the KDE scheme; GTK 2 gets Breeze Dark with Helba colors; GTK 4 / libadwaita
       take the scheme colors through Plasma's gtkconfig
-- [ ] .hack-inspired icon theme (apps, places, actions), for Qt and GTK
+- [x] .hack icon theme v1 (packages/icons/HelbaWorld, dev/icons_gen.py): glass folders with a bronze rim,
+      studs and a diamond emblem per place, trash, start-here; inherits Papirus-Dark for the rest
+- [ ] Icons v2: .hack tray / status icons (network, volume, battery, bluetooth), mimetypes
 
 ## After the backlog
 - [x] .hack identity (The World) across the widget: bar islands, task buttons, launcher emblem, clock,
