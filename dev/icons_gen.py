@@ -216,12 +216,207 @@ for n in ["start-here", "start-here-kde", "start-here-kde-plasma", "start-here-a
     write(f"scalable/places/{n}.svg", start_here())
     count += 1
 
+
+# ------------------------------------------------------------------ tray / status (v2)
+# 22 px grid, recolored by Plasma from the color scheme: Text is ink, Highlight is the
+# data cyan, NeutralText the gold (bronze in light), NegativeText red.
+
+STATUS_STYLE = ('<style type="text/css" id="current-color-scheme">'
+                '.ColorScheme-Text{color:#eaf0fb;}.ColorScheme-Highlight{color:#8fe3ff;}'
+                '.ColorScheme-NeutralText{color:#f5c85a;}.ColorScheme-NegativeText{color:#ff6074;}</style>')
+
+
+def st(body):
+    return f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22"><defs>{STATUS_STYLE}</defs>{body}</svg>\n'
+
+
+def stroke(cls, d, w=1.6, op=1.0, extra=""):
+    return (f'<path class="ColorScheme-{cls}" style="fill:none;stroke:currentColor" stroke-width="{w}" '
+            f'stroke-linecap="round" stroke-linejoin="round" stroke-opacity="{op}" d="{d}"{extra}/>')
+
+
+def fill(cls, d, op=1.0):
+    return f'<path class="ColorScheme-{cls}" style="fill:currentColor" fill-opacity="{op}" d="{d}"/>'
+
+
+def sdiamond(cx, cy, r):
+    return f"M{cx},{cy - r} L{cx + r},{cy} L{cx},{cy + r} L{cx - r},{cy} Z"
+
+
+SLASH = stroke("NegativeText", "M4,18 L18,4", 1.8)
+
+
+def wifi(level, mark=None, dashed=False, off=False):
+    """level 0..3 arcs lit; mark: None | 'secure' | 'limited'."""
+    arcs = ["M8.2,13.6 A4,4 0 0 1 13.8,13.6", "M5.4,10.8 A8,8 0 0 1 16.6,10.8", "M2.6,8 A12,12 0 0 1 19.4,8"]
+    out = []
+    for i, d in enumerate(arcs):
+        lit = i < level and not off
+        dash = ' stroke-dasharray="2 1.6"' if dashed else ""
+        out.append(stroke("Highlight" if lit else "Text", d, 1.6, 1.0 if lit else 0.3, dash))
+    out.append(fill("NeutralText" if not off else "Text", sdiamond(11, 17.2, 2.2), 1.0 if not off else 0.4))
+    if mark == "secure":
+        out.append(fill("NeutralText", sdiamond(18, 16.5, 2.4)))
+    if mark == "limited":
+        out.append(stroke("NeutralText", "M18.5,12.5 V16", 1.6) + fill("NeutralText", sdiamond(18.5, 18.6, 0.9)))
+    if off:
+        out.append(SLASH)
+    return st("".join(out))
+
+
+def wired(on=True, dashed=False, off=False, mark=None):
+    dash = ' stroke-dasharray="2 1.6"' if dashed else ""
+    out = [stroke("NeutralText", sdiamond(5.5, 11, 3.2), 1.5),
+           stroke("NeutralText", sdiamond(16.5, 11, 3.2), 1.5),
+           stroke("Highlight" if on and not off else "Text", "M8.7,11 H13.3", 1.8, 1.0 if on and not off else 0.35, dash)]
+    if on and not off:
+        out.append(fill("Highlight", sdiamond(5.5, 11, 1.2)) + fill("Highlight", sdiamond(16.5, 11, 1.2)))
+    if mark == "limited":
+        out.append(stroke("NeutralText", "M11,3 V6.5", 1.6) + fill("NeutralText", sdiamond(11, 8.6, 0.9)))
+    if off:
+        out.append(SLASH)
+    return st("".join(out))
+
+
+def vpn(on=True, dashed=False):
+    dash = ' stroke-dasharray="2 1.4"' if dashed else ""
+    return st(stroke("NeutralText", "M11,2.5 L18.5,6 V11 C18.5,15.5 15,18.5 11,19.8 C7,18.5 3.5,15.5 3.5,11 V6 Z", 1.5, 1, dash)
+              + (fill("Highlight", sdiamond(11, 11, 3)) if on else ""))
+
+
+def speaker(level, muted=False, danger=False):
+    out = [fill("NeutralText", "M3,8.2 H6.4 L10.6,4.4 V17.6 L6.4,13.8 H3 Z")]
+    if muted:
+        out.append(stroke("NegativeText", "M13.5,8 L19,13.5 M19,8 L13.5,13.5", 1.8))
+        return st("".join(out))
+    arcs = ["M13.4,8.6 A3.4,3.4 0 0 1 13.4,13.4", "M15.4,6.4 A6.4,6.4 0 0 1 15.4,15.6", "M17.4,4.2 A9.4,9.4 0 0 1 17.4,17.8"]
+    for i, d in enumerate(arcs):
+        lit = i < level
+        cls = "NegativeText" if (danger and lit) else ("Highlight" if lit else "Text")
+        out.append(stroke(cls, d, 1.6, 1.0 if lit else 0.3))
+    return st("".join(out))
+
+
+def mic(level, muted=False):
+    out = [stroke("NeutralText", "M8,5 A3,3 0 0 1 14,5 V10.5 A3,3 0 0 1 8,10.5 Z", 1.5),
+           stroke("NeutralText", "M5,10 A6,6 0 0 0 17,10 M11,16 V19 M7.5,19.5 H14.5", 1.5)]
+    if muted:
+        out.append(SLASH)
+    else:
+        for i in range(3):
+            lit = i < level
+            out.append(fill("Highlight" if lit else "Text", f"M9.4,{11.2 - i * 2.4} H12.6 V{12.4 - i * 2.4} H9.4 Z", 1.0 if lit else 0.3))
+    return st("".join(out))
+
+
+def battery(pct, charging=False, missing=False, charged=False):
+    out = [fill("NeutralText", "M9,1.6 H13 V3.2 H9 Z")]
+    dash = ' stroke-dasharray="2 1.4"' if missing else ""
+    out.append(stroke("NeutralText", "M6,3.4 H16 V20.2 H6 Z", 1.4, 1, dash))
+    if missing:
+        out.append(stroke("Text", "M9,9 A2,2 0 1 1 11,11 V13", 1.4, 0.8) + fill("Text", sdiamond(11, 16, 0.9), 0.8))
+        return st("".join(out))
+    h = 15.2 * max(0, min(100, pct)) / 100
+    if h > 0.2:
+        cls = "NegativeText" if pct <= 10 and not charging else ("NeutralText" if pct <= 20 and not charging else "Highlight")
+        out.append(fill(cls, f"M7.6,{19 - h:.2f} H14.4 V19 H7.6 Z", 0.9))
+    if charging:
+        out.append(fill("NeutralText", "M12.6,5.8 L8.4,12.4 H11 L9.8,17.6 L14,10.6 H11.4 Z"))
+        out.append(stroke("Text", "M12.6,5.8 L8.4,12.4 H11 L9.8,17.6 L14,10.6 H11.4 Z", 0.6, 0.6))
+    if charged:
+        out.append(fill("Text", sdiamond(11, 11, 2.2), 0.9))
+    return st("".join(out))
+
+
+def bluetooth(on=True, off=False, paired=False):
+    cls = "Highlight" if on and not off else "Text"
+    out = [stroke("NeutralText", sdiamond(11, 11, 9.4), 1.2, 0.8),
+           stroke(cls, "M7.6,7.6 L14.4,14 L11,17 V5 L14.4,8 L7.6,14.4", 1.5, 1.0 if on and not off else 0.5)]
+    if paired:
+        out.append(fill("Highlight", sdiamond(5.2, 11, 1)) + fill("Highlight", sdiamond(16.8, 11, 1)))
+    if off:
+        out.append(SLASH)
+    return st("".join(out))
+
+
+def airplane(on=True):
+    out = [fill("NeutralText" if on else "Text",
+                "M11,2.5 C11.9,2.5 12.2,3.6 12.2,4.8 V8.6 L19.5,12.6 V14.3 L12.2,12 V16.2 L14.6,18 V19.5 L11,18.4 "
+                "L7.4,19.5 V18 L9.8,16.2 V12 L2.5,14.3 V12.6 L9.8,8.6 V4.8 C9.8,3.6 10.1,2.5 11,2.5 Z", 1.0 if on else 0.5)]
+    if not on:
+        out.append(SLASH)
+    return st("".join(out))
+
+
+STATUS = {}
+def add(names, text):
+    for n in names:
+        for v in (n, n + "-panel", n + "-symbolic"):
+            STATUS[v] = text
+
+# Wi-Fi
+for lvl, names in {0: ["network-wireless-0", "network-wireless-signal-none", "network-wireless-connected-00"],
+                   1: ["network-wireless-20", "network-wireless-signal-weak", "network-wireless-signal-low", "network-wireless-connected-25"],
+                   2: ["network-wireless-40", "network-wireless-60", "network-wireless-signal-ok", "network-wireless-connected-50"],
+                   3: ["network-wireless-80", "network-wireless-100", "network-wireless-signal-good", "network-wireless-signal-excellent",
+                       "network-wireless-connected-75", "network-wireless-connected-100", "network-wireless-connected", "network-wireless",
+                       "network-wireless-on", "network-wireless-available"]}.items():
+    add(names, wifi(lvl))
+    add([n.replace("signal-", "secure-signal-") for n in names if "signal-" in n], wifi(lvl, "secure"))
+    add([n + "-limited" for n in names if n.split("-")[-1].isdigit() and "connected" not in n], wifi(lvl, "limited"))
+add(["network-wireless-encrypted"], wifi(3, "secure"))
+add(["network-wireless-acquiring"], wifi(3, dashed=True))
+add(["network-wireless-disconnected", "network-wireless-offline", "network-wireless-off", "network-wireless-no-route"], wifi(0, off=True))
+add(["network-wireless-hotspot"], wifi(3, "secure"))
+# Wired, VPN, generic
+add(["network-wired-activated", "network-wired", "network-wired-secure", "network-wired-available", "network-idle",
+     "network-transmit-receive", "network-transmit", "network-receive", "network-connect"], wired(True))
+add(["network-wired-acquiring"], wired(True, dashed=True))
+add(["network-wired-disconnected", "network-wired-offline", "network-wired-unavailable", "network-offline",
+     "network-unavailable", "network-error", "network-disconnect"], wired(False, off=True))
+add(["network-wired-no-route", "network-limited"], wired(True, mark="limited"))
+add(["network-vpn"], vpn(True))
+add(["network-vpn-acquiring"], vpn(True, dashed=True))
+# Volume and microphone
+add(["audio-volume-high", "audio-volume-high-warning"], speaker(3))
+add(["audio-volume-high-danger"], speaker(3, danger=True))
+add(["audio-volume-medium"], speaker(2))
+add(["audio-volume-low"], speaker(1))
+add(["audio-volume-low-zero", "audio-volume-zero"], speaker(0))
+add(["audio-volume-muted", "audio-volume-muted-blocking", "audio-volume-muted-blocked", "audio-volume-off", "audio-off"], speaker(0, muted=True))
+add(["microphone-sensitivity-high"], mic(3))
+add(["microphone-sensitivity-medium"], mic(2))
+add(["microphone-sensitivity-low"], mic(1))
+add(["microphone-sensitivity-muted"], mic(0, muted=True))
+# Battery
+PROFILES = ["", "-profile-balanced", "-profile-performance", "-profile-powersave"]
+for pct in range(0, 101, 10):
+    for prof in PROFILES:
+        add([f"battery-{pct:03d}{prof}"], battery(pct))
+        add([f"battery-{pct:03d}-charging{prof}"], battery(pct, charging=True))
+for name, pct in [("battery-full", 100), ("battery-good", 70), ("battery-medium", 50), ("battery-low", 20),
+                  ("battery-caution", 10), ("battery-empty", 0)]:
+    add([name], battery(pct))
+    add([name + "-charging"], battery(pct, charging=True))
+add(["battery-100-charged", "battery-full-charged", "battery-charged", "battery_charged", "battery_plugged"], battery(100, charged=True))
+add(["battery-missing"], battery(0, missing=True))
+# Bluetooth, airplane
+add(["bluetooth-active", "bluetooth-online", "bluetooth", "preferences-system-bluetooth", "network-bluetooth-activated", "network-bluetooth"], bluetooth(True))
+add(["bluetooth-paired"], bluetooth(True, paired=True))
+add(["bluetooth-disabled", "bluetooth-offline", "network-bluetooth-inactive"], bluetooth(False, off=True))
+add(["airplane-mode"], airplane(True))
+add(["airplane-mode-off"], airplane(False))
+
+for n, text in STATUS.items():
+    write(f"scalable/status/{n}.svg", text)
+print(f"{len(STATUS)} status icons")
+
 write("index.theme", """[Icon Theme]
 Name=HelbaWorld
 Comment=.hack (The World): glass folders with a bronze rim and diamond emblems; everything else from your icon theme
 Inherits=Papirus-Dark,breeze-dark,hicolor
 Example=folder
-Directories=16x16/places,scalable/places
+Directories=16x16/places,scalable/places,scalable/status
 
 [16x16/places]
 Context=Places
@@ -233,6 +428,13 @@ Context=Places
 Size=64
 MinSize=16
 MaxSize=512
+Type=Scalable
+
+[scalable/status]
+Context=Status
+Size=22
+MinSize=16
+MaxSize=64
 Type=Scalable
 """)
 print(f"{count} icons written to {OUT}")

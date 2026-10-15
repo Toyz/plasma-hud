@@ -66,7 +66,9 @@ Ordered. Check things off as they land.
       take the scheme colors through Plasma's gtkconfig
 - [x] .hack icon theme v1 (packages/icons/HelbaWorld, dev/icons_gen.py): glass folders with a bronze rim,
       studs and a diamond emblem per place, trash, start-here; inherits Papirus-Dark for the rest
-- [ ] Icons v2: .hack tray / status icons (network, volume, battery, bluetooth), mimetypes
+- [x] Icons v2: .hack tray / status icons (Wi-Fi, wired, VPN, volume, microphone, battery, Bluetooth,
+      airplane mode), recolored live from the color scheme
+- [ ] Icons v3: mimetypes
 
 ## After the backlog
 - [x] .hack identity (The World) across the widget: bar islands, task buttons, launcher emblem, clock,
