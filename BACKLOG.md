@@ -76,7 +76,7 @@ Ordered. Check things off as they land.
 - [x] .hack for what is left: Plasma theme popups, switchers, lock, login
 - [x] Splash screen at login (packages/lookandfeel, org.helba.world via ksplashrc): the Chaos Gate draws in by stage
 - [x] Logout / shutdown screen (org.helba.world logout): gold-trimmed plates for each way out, countdown ring on direct requests
-- [ ] Tray icons for media playback and brightness (still Papirus)
+- [x] Tray icons for media playback, brightness and Night Light (plus the media popup buttons)
 
 ## Pending outside this repo
 - [x] muralist: hudwall-aware wallpaper setter (b395269); verified live on all three screens

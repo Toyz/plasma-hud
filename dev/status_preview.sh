@@ -13,14 +13,14 @@ import QtQuick
 import QtQuick.Window
 Window {
     id: w
-    width: 1100; height: 330; visible: true
+    width: 1100; height: 400; visible: true
     readonly property var names: ["network-wireless-signal-none", "network-wireless-signal-weak", "network-wireless-signal-ok",
         "network-wireless-signal-excellent", "network-wireless-secure-signal-good", "network-wireless-80-limited",
         "network-wireless-acquiring", "network-wireless-disconnected", "network-wired-activated", "network-wired-disconnected",
         "network-vpn", "audio-volume-high", "audio-volume-medium", "audio-volume-low", "audio-volume-muted",
         "microphone-sensitivity-medium", "microphone-sensitivity-muted", "battery-100", "battery-060", "battery-020",
         "battery-010", "battery-040-charging", "battery-full-charged", "battery-missing", "bluetooth-active",
-        "bluetooth-paired", "bluetooth-disabled", "airplane-mode", "notification-inactive", "notification-active", "notification-disabled"]
+        "bluetooth-paired", "bluetooth-disabled", "airplane-mode", "notification-inactive", "notification-active", "notification-disabled", "brightness-high", "redshift-status-on", "redshift-status-day", "redshift-status-off", "media-playback-playing", "media-playback-paused", "media-playback-stopped", "media-skip-backward", "media-playback-start", "media-skip-forward"]
     Column {
         Repeater {
             model: [["dark", "#0b1126"], ["light", "#f3eee1"]]

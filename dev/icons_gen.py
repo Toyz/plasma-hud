@@ -419,6 +419,59 @@ def bell(badge=False, off=False):
 add(["notifications", "notification-inactive", "preferences-desktop-notification", "preferences-desktop-notification-bell"], bell())
 add(["notification-active", "notification-new", "notifications-new"], bell(badge=True))
 add(["notification-disabled", "notifications-disabled"], bell(off=True))
+def sun(dim=False, crescent=False):
+    import math
+    op = 0.45 if dim else 1.0
+    out = [fill("NeutralText", sdiamond(11, 11, 4.2), op)]
+    for k in range(8):
+        a = math.radians(k * 45)
+        r1, r2 = 6.6, 9.4 if k % 2 == 0 else 8.4
+        out.append(stroke("NeutralText", f"M{11 + r1 * math.cos(a):.2f},{11 + r1 * math.sin(a):.2f} L{11 + r2 * math.cos(a):.2f},{11 + r2 * math.sin(a):.2f}", 1.5, op))
+    if crescent:
+        out.append(fill("Highlight", "M17.6,13.2 A3.6,3.6 0 1 0 17.6,20.4 A2.8,2.8 0 1 1 17.6,13.2 Z"))
+    return st("".join(out))
+
+
+def moon(on=True):
+    out = [fill("NeutralText" if on else "Text", "M13.6,3.4 A8,8 0 1 0 18.6,15.8 A6.4,6.4 0 1 1 13.6,3.4 Z", 1.0 if on else 0.45)]
+    if on:
+        out.append(fill("Highlight", sdiamond(16.6, 6.4, 2)))
+    else:
+        out.append(SLASH)
+    return st("".join(out))
+
+
+def media(kind, framed=True):
+    out = []
+    if framed:
+        out.append(stroke("NeutralText", sdiamond(11, 11, 9.4), 1.3, 0.85))
+    cls = "Highlight" if framed else "NeutralText"
+    if kind == "play":
+        out.append(fill(cls, "M8.4,6.6 L15.6,11 L8.4,15.4 Z"))
+    elif kind == "pause":
+        out.append(fill(cls, "M7.6,6.8 H10 V15.2 H7.6 Z M12,6.8 H14.4 V15.2 H12 Z"))
+    elif kind == "stop":
+        out.append(fill(cls, "M7.4,7.4 H14.6 V14.6 H7.4 Z"))
+    elif kind == "next":
+        out.append(fill(cls, "M5.6,6.6 L11.4,11 L5.6,15.4 Z M11.4,6.6 L17.2,11 L11.4,15.4 Z"))
+    elif kind == "prev":
+        out.append(fill(cls, "M16.4,6.6 L10.6,11 L16.4,15.4 Z M10.6,6.6 L4.8,11 L10.6,15.4 Z"))
+    return st("".join(out))
+
+
+add(["brightness-high", "brightness", "video-display-brightness", "display-brightness"], sun())
+add(["brightness-low"], sun(dim=True))
+add(["redshift-status-on"], moon(True))
+add(["redshift-status-day"], sun(dim=True, crescent=True))
+add(["redshift-status-off"], moon(False))
+add(["media-playback-playing"], media("play"))
+add(["media-playback-paused"], media("pause"))
+add(["media-playback-stopped"], media("stop"))
+add(["media-playback-start"], media("play", framed=False))
+add(["media-playback-pause"], media("pause", framed=False))
+add(["media-playback-stop"], media("stop", framed=False))
+add(["media-skip-forward"], media("next", framed=False))
+add(["media-skip-backward"], media("prev", framed=False))
 add(["airplane-mode"], airplane(True))
 add(["airplane-mode-off"], airplane(False))
 
