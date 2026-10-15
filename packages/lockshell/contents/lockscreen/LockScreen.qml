@@ -123,6 +123,12 @@ Item {
             last = Qt.point(mouse.x, mouse.y);
         }
         onPressed: root.wake()
+        // Only the screen with the mouse keeps its plate up; the typed password is
+        // shared (Pass), so moving to another screen loses nothing.
+        onExited: {
+            root.active = false;
+            last = Qt.point(-1, -1);
+        }
         focus: true
         Keys.onPressed: event => {
             if (event.key === Qt.Key_Escape) {
