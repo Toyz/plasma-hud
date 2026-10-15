@@ -11,7 +11,8 @@ const gateOut = effect.addFragmentShader(traits, "gate_out.frag");
 // turned up for everything else.
 const openMs = 900;
 const closeMs = 800;
-const minimizeMs = 850;
+const minimizeMs = 480;
+const restoreMs = 520;
 
 // Real application windows only: no panels, popups, menus, tooltips or the desktop.
 function gated(w) {
@@ -81,7 +82,7 @@ function watch(w) {
     w.minimizedChanged.connect(() => {
         if (!gated(w)) return;
         if (w.minimized) gateOutOf(w, minimizeMs, { value1: 0.55, value2: 0.55 }, toTile(w));
-        else gateInto(w, openMs, { value1: 0.94, value2: 0.94 });
+        else gateInto(w, restoreMs, { value1: 0.94, value2: 0.94 });
     });
 }
 
