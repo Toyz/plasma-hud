@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "KWin/Effect",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ai@helba.ai",
+                "Name": "helba"
+            }
+        ],
+        "Category": "Appearance",
+        "Description": "Windows gate in and out like The World: they assemble from data cells when they open and drain away when they close or minimize",
+        "EnabledByDefault": false,
+        "Id": "helbagate",
+        "License": "MIT",
+        "Name": "Helba Gate",
+        "Version": "1.0.0"
+    },
+    "X-KWin-Exclusive-Category": "toplevel-open-close-animation",
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}

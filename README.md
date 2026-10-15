@@ -20,6 +20,10 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   workspaces by their generated three-word area names, jump to windows, and run commands.
 - **Gate warp**: a .hack gate-out / gate-in transition across every screen on each
   workspace switch.
+- **Helba Gate** (`packages/helbagate`): KWin effect for window open, close and minimize.
+  Windows assemble from data cells and drain away, in GLSL. It is the one small piece
+  of JavaScript in the repo, because KWin only accepts third-party animation effects as
+  scripts.
 - **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
   load and net traces, processes, system, command deck), together in a popup or one per
   desktop widget.

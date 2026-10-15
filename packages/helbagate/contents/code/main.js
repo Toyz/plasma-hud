@@ -1,0 +1,98 @@
+// Helba Gate: windows gate in and out like The World. KWin only takes third-party
+// animation effects as scripts, so this file is just wiring; the look is the two
+// shaders in ../shaders (gate_in: assemble from data cells, gate_out: drain away).
+"use strict";
+
+const traits = Effect.MapTexture | Effect.Modulate;
+const gateIn = effect.addFragmentShader(traits, "gate_in.frag");
+const gateOut = effect.addFragmentShader(traits, "gate_out.frag");
+
+const openMs = animationTime(460);
+const closeMs = animationTime(420);
+const minimizeMs = animationTime(380);
+
+// Real application windows only: no panels, popups, menus, tooltips or the desktop.
+function gated(w) {
+    if (effects.hasActiveFullScreenEffect) return false;
+    if (w.popupWindow || w.outline || w.lockScreen || w.inputMethod) return false;
+    if (w.desktopWindow || w.dock || w.splash || w.toolbar || w.notification || w.onScreenDisplay) return false;
+    return w.normalWindow || w.dialog;
+}
+
+function stop(w) {
+    if (w.gateAnimation) {
+        cancel(w.gateAnimation);
+        delete w.gateAnimation;
+    }
+}
+
+function gateInto(w, ms, from) {
+    stop(w);
+    w.gateAnimation = animate({
+        window: w,
+        duration: ms,
+        curve: QEasingCurve.OutCubic,
+        fragmentShader: gateIn,
+        animations: [
+            { type: Effect.ShaderUniform, uniform: "progress", from: 0, to: 1 },
+            { type: Effect.Scale, from: from }
+        ]
+    });
+}
+
+function gateOutOf(w, ms, to, offset) {
+    stop(w);
+    const animations = [
+        { type: Effect.ShaderUniform, uniform: "progress", from: 0, to: 1 },
+        { type: Effect.Scale, to: to }
+    ];
+    if (offset) animations.push({ type: Effect.Translation, to: offset });
+    w.gateAnimation = animate({
+        window: w,
+        duration: ms,
+        curve: QEasingCurve.InCubic,
+        fragmentShader: gateOut,
+        animations: animations
+    });
+}
+
+// Minimize drains toward the window's task tile when the strip has published it.
+function toTile(w) {
+    const icon = w.iconGeometry;
+    if (!icon || icon.width <= 0) return null;
+    const g = w.geometry;
+    return {
+        value1: (icon.x + icon.width / 2) - (g.x + g.width / 2),
+        value2: (icon.y + icon.height / 2) - (g.y + g.height / 2)
+    };
+}
+
+function watch(w) {
+    w.minimizedChanged.connect(() => {
+        if (!gated(w)) return;
+        if (w.minimized) gateOutOf(w, minimizeMs, { value1: 0.55, value2: 0.55 }, toTile(w));
+        else gateInto(w, openMs, { value1: 0.94, value2: 0.94 });
+    });
+}
+
+effects.windowAdded.connect(w => {
+    watch(w);
+    if (!gated(w) || !w.visible) return;
+    if (!effect.grab(w, Effect.WindowAddedGrabRole)) return;
+    gateInto(w, openMs, { value1: 0.96, value2: 0.96 });
+});
+
+effects.windowClosed.connect(w => {
+    if (!gated(w)) return;
+    if (!effect.grab(w, Effect.WindowClosedGrabRole)) return;
+    gateOutOf(w, closeMs, { value1: 0.97, value2: 0.97 }, null);
+});
+
+// Another effect took the window over: let it.
+effects.windowDataChanged.connect((w, role) => {
+    if (role === Effect.WindowAddedGrabRole || role === Effect.WindowClosedGrabRole) {
+        if (w.gateAnimation && effect.isGrabbed(w, role)) stop(w);
+    }
+});
+
+effects.stackingOrder.forEach(watch);

@@ -56,6 +56,7 @@ package_dir() {
         Plasma/Wallpaper) echo "$data/plasma/wallpapers" ;;
         Plasma/LookAndFeel) echo "$data/plasma/look-and-feel" ;;
         Plasma/Theme) echo "$data/plasma/desktoptheme" ;;
+        KWin/Effect) echo "$data/kwin/effects" ;;
         *) return 1 ;;
     esac
 }
@@ -197,6 +198,38 @@ restore_kvantum() {
     say "widget style: ${style:-Breeze} (restored)"
 }
 
+# Helba Gate (window open / close / minimize): replaces Glide and Squash.
+effect_keys="glideEnabled scaleEnabled fadeEnabled squashEnabled magiclampEnabled helbagateEnabled"
+
+apply_gate() {
+    if [ "$(kreadconfig6 --file kwinrc --group Plugins --key helbagateEnabled 2>/dev/null)" != true ]; then
+        mkdir -p "$state"
+        : > "$state/effects.before"
+        for k in $effect_keys; do
+            printf '%s=%s\n' "$k" "$(kreadconfig6 --file kwinrc --group Plugins --key "$k" 2>/dev/null)" >> "$state/effects.before"
+        done
+    fi
+    for k in glideEnabled scaleEnabled fadeEnabled squashEnabled magiclampEnabled; do
+        kwriteconfig6 --file kwinrc --group Plugins --key "$k" false
+    done
+    kwriteconfig6 --file kwinrc --group Plugins --key helbagateEnabled true
+    qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
+    say "window animations: Helba Gate (Glide / Squash off)"
+}
+
+restore_gate() {
+    [ -f "$state/effects.before" ] || return 0
+    while IFS='=' read -r k v; do
+        if [ -n "$v" ]; then
+            kwriteconfig6 --file kwinrc --group Plugins --key "$k" "$v"
+        else
+            kwriteconfig6 --file kwinrc --group Plugins --key "$k" --delete
+        fi
+    done < "$state/effects.before"
+    qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
+    say "window animations: restored"
+}
+
 restore_scheme() {
     [ -f "$state/colorscheme.before" ] || return 0
     plasma-apply-colorscheme "$(cat "$state/colorscheme.before")" >/dev/null \
@@ -253,6 +286,7 @@ case "${1:-}" in
         restore_scheme
         restore_frames
         restore_kvantum
+        restore_gate
         ;;
     --no-layout)
         build
@@ -276,6 +310,7 @@ case "${1:-}" in
         apply_scheme
         apply_frames
         apply_kvantum
+        apply_gate
         units
         "$hudctl" layout
         ;;

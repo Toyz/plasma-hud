@@ -68,10 +68,10 @@ THEMES = {
         colors={
             "window.color": "#0b1126", "base.color": "#080d1e", "alt.base.color": "#0b1126",
             "button.color": "#141c3e", "light.color": "#1c2650", "mid.light.color": "#141c3e",
-            "dark.color": "#04070f", "mid.color": "#0e1530", "highlight.color": "#8fe3ff",
-            "inactive.highlight.color": "#5a9ab5", "text.color": "#eaf0fb", "window.text.color": "#eaf0fb",
+            "dark.color": "#04070f", "mid.color": "#0e1530", "highlight.color": "#1f4a63",
+            "inactive.highlight.color": "#16364a", "text.color": "#eaf0fb", "window.text.color": "#eaf0fb",
             "button.text.color": "#eaf0fb", "disabled.text.color": "#5d6684", "tooltip.text.color": "#eaf0fb",
-            "highlight.text.color": "#0a1022", "link.color": "#b8935a", "link.visited.color": "#c4aa6e",
+            "highlight.text.color": "#eaf0fb", "link.color": "#b8935a", "link.visited.color": "#c4aa6e",
         },
     ),
     "HelbaWorldLight": dict(
@@ -80,10 +80,10 @@ THEMES = {
         colors={
             "window.color": "#f3eee1", "base.color": "#faf7ee", "alt.base.color": "#f3eee1",
             "button.color": "#ece5d4", "light.color": "#fbf8f0", "mid.light.color": "#ece5d4",
-            "dark.color": "#b9ad90", "mid.color": "#d9d0b8", "highlight.color": "#14708a",
-            "inactive.highlight.color": "#5f98a8", "text.color": "#1a2033", "window.text.color": "#1a2033",
+            "dark.color": "#b9ad90", "mid.color": "#d9d0b8", "highlight.color": "#bfdce3",
+            "inactive.highlight.color": "#d6e7ea", "text.color": "#1a2033", "window.text.color": "#1a2033",
             "button.text.color": "#1a2033", "disabled.text.color": "#9a9fae", "tooltip.text.color": "#1a2033",
-            "highlight.text.color": "#faf7ee", "link.color": "#8a6418", "link.visited.color": "#6e5428",
+            "highlight.text.color": "#1a2033", "link.color": "#8a6418", "link.visited.color": "#6e5428",
         },
     ),
 }
@@ -92,6 +92,7 @@ THEMES = {
 
 F = 6        # menu / tooltip frame thickness
 FI = 3       # menu item frame thickness
+IV = 2       # item view frame thickness
 C = 12       # stretchable middle size
 
 
@@ -193,6 +194,12 @@ def hack_pieces(t, y0):
         nine(p, "menuitem-focused" + suffix, FI, C, item_frame(t, 0.16, True))
         nine(p, "menuitem-pressed" + suffix, FI, C, item_frame(t, 0.28, True))
         nine(p, "menuitem-toggled" + suffix, FI, C, item_frame(t, 0.22, True))
+        # List / tree / icon view items (Dolphin, System Settings): same language as menu
+        # items, so pressing no longer flashes the template's bright press state.
+        nine(p, "itemview-normal" + suffix, IV, C, item_frame(t, 0.0, False))
+        nine(p, "itemview-focused" + suffix, IV, C, item_frame(t, 0.08, False))
+        nine(p, "itemview-pressed" + suffix, IV, C, item_frame(t, 0.26, True))
+        nine(p, "itemview-toggled" + suffix, IV, C, item_frame(t, 0.18, True))
     return "\n".join(p.parts)
 
 
@@ -219,7 +226,7 @@ def build(name, t):
 
     svg = HEX.sub(lambda m: t["recolor"](m.group(0)), svg)
     # Retire the template's own menu / item / tooltip art (its menu shadows stay).
-    svg = re.sub(r'id="((?:menu-normal|menuitem-(?:focused|pressed|toggled)|tooltip-normal)[^"]*)"', r'id="old-\1"', svg)
+    svg = re.sub(r'id="((?:menu-normal|menuitem-(?:focused|pressed|toggled)|tooltip-normal|itemview)[^"]*)"', r'id="old-\1"', svg)
     m = re.search(r'<svg[^>]*\bheight="([0-9.]+)', svg)
     y0 = float(m.group(1)) + 20 if m else 2000
     svg = svg.replace("</svg>", "<!-- helba .hack pieces -->\n" + hack_pieces(t, y0) + "\n</svg>")
@@ -227,7 +234,14 @@ def build(name, t):
     cfg = set_key(cfg, "%General", "author", "helba, after Tsu Jan's " + base)
     cfg = set_key(cfg, "%General", "comment", ".hack (The World): Helba World glass, gold and data cyan")
     cfg = set_key(cfg, "%General", "composite", "true")
-    cfg = set_key(cfg, "%General", "translucent_windows", "false")
+    # KWin opacity rules see through whole windows; Kvantum's own translucency lets the
+    # glass background show (and blur) while text stays crisp. Media apps stay opaque.
+    cfg = set_key(cfg, "%General", "translucent_windows", "true")
+    cfg = set_key(cfg, "%General", "reduce_window_opacity", "15")
+    cfg = set_key(cfg, "%General", "blurring", "true")
+    cfg = set_key(cfg, "%General", "popup_blurring", "false")
+    cfg = set_key(cfg, "%General", "opaque", "kaffeine,kmplayer,subtitlecomposer,kdenlive,vlc,smplayer,smplayer2,"
+                  "avidemux,avidemux3_qt5,kamoso,QtCreator,VirtualBox,VirtualBoxVM,dragon,digikam,lyx,obs,krita,haruna")
     # The template's menu-shadow art replaces the frame on the translucent (Wayland) path.
     cfg = set_key(cfg, "%General", "menu_shadow_depth", "0")
     cfg = set_key(cfg, "%General", "tooltip_shadow_depth", "0")
@@ -260,6 +274,25 @@ frame.top={FI}
 frame.bottom={FI}
 frame.left={FI}
 frame.right={FI}
+""")
+    cfg = section(cfg, "ItemView", f"""
+inherits=PanelButtonCommand
+frame=true
+frame.element=itemview
+interior.element=itemview
+text.normal.color={t["ink"]}
+text.focus.color={t["ink"]}
+text.press.color={t["ink"]}
+text.toggle.color={t["ink"]}
+text.margin=1
+text.margin.top=1
+text.margin.bottom=1
+text.margin.left=2
+text.margin.right=2
+frame.top={IV}
+frame.bottom={IV}
+frame.left={IV}
+frame.right={IV}
 """)
     cfg = section(cfg, "ToolTip", f"""
 inherits=GenericFrame

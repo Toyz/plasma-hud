@@ -46,7 +46,10 @@ Ordered. Check things off as they land.
 - [x] Pinned apps no longer blink out of the strip while launching
 - [x] .hack right-click menus + app chrome: Helba World color schemes + Kvantum style (dev/kvantum_gen.py),
       menus with gold edge, studs and the cyan/bracket hover; works on the Wayland translucent path
-- [ ] Gate in / gate out window animations (open, close, minimize): KWin scripted effect + GLSL data-scatter shader
+- [x] Gate in / gate out window animations: KWin effect helbagate (packages/helbagate). Windows assemble
+      from data cells on open / unminimize and drain away on close / minimize (toward their task tile);
+      replaces Glide and Squash
+- [x] Kvantum list items: .hack hover / press / selection, no white press flash; KDE apps translucent + blur
 - [ ] Alt+Tab window switcher (KWin/WindowSwitcher package) and a Super+Tab variant
 - [ ] Lock screen
 - [ ] Login screen (SDDM)
