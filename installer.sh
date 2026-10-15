@@ -203,8 +203,10 @@ restore_kvantum() {
     say "widget style: ${style:-Breeze} (restored)"
 }
 
-# Helba Gate (window open / close / minimize): replaces Glide and Squash.
-effect_keys="glideEnabled scaleEnabled fadeEnabled squashEnabled magiclampEnabled helbagateEnabled"
+# Helba Gate (window open / close / minimize): replaces Glide and Squash. Slide goes
+# too: the gate warp is the desktop-switch transition, and Slide painted the panels over
+# it while switching.
+effect_keys="glideEnabled scaleEnabled fadeEnabled squashEnabled magiclampEnabled slideEnabled helbagateEnabled"
 
 apply_gate() {
     if [ "$(kreadconfig6 --file kwinrc --group Plugins --key helbagateEnabled 2>/dev/null)" != true ]; then
@@ -214,12 +216,12 @@ apply_gate() {
             printf '%s=%s\n' "$k" "$(kreadconfig6 --file kwinrc --group Plugins --key "$k" 2>/dev/null)" >> "$state/effects.before"
         done
     fi
-    for k in glideEnabled scaleEnabled fadeEnabled squashEnabled magiclampEnabled; do
+    for k in glideEnabled scaleEnabled fadeEnabled squashEnabled magiclampEnabled slideEnabled; do
         kwriteconfig6 --file kwinrc --group Plugins --key "$k" false
     done
     kwriteconfig6 --file kwinrc --group Plugins --key helbagateEnabled true
     qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
-    say "window animations: Helba Gate (Glide / Squash off)"
+    say "window animations: Helba Gate (Glide / Squash / Slide off)"
 }
 
 restore_gate() {
