@@ -44,6 +44,8 @@ void main() {
     // Faint gold grid where cells have left.
     vec2 g = fract(px / cell);
     float grid = step(0.93, max(g.x, g.y)) * smoothstep(0.1, 0.5, t) * (1.0 - smoothstep(0.7, 1.0, t));
+    // Only where the window had pixels: no grid over transparent areas.
+    grid *= texture(sampler, texcoord0).a;
     acc.rgb += gold * grid * 0.35;
     acc.a = max(acc.a, grid * 0.35);
     fragColor = acc * modulation;

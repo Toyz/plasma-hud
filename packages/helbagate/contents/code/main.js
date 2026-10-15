@@ -7,13 +7,18 @@ const traits = Effect.MapTexture | Effect.Modulate;
 const gateIn = effect.addFragmentShader(traits, "gate_in.frag");
 const gateOut = effect.addFragmentShader(traits, "gate_out.frag");
 
-const openMs = animationTime(460);
-const closeMs = animationTime(420);
-const minimizeMs = animationTime(380);
+// Fixed lengths: a gate should read as a gate even when the global animation speed is
+// turned up for everything else.
+const openMs = 900;
+const closeMs = 800;
+const minimizeMs = 850;
 
 // Real application windows only: no panels, popups, menus, tooltips or the desktop.
 function gated(w) {
     if (effects.hasActiveFullScreenEffect) return false;
+    // Layer-shell overlays (the gate warp, the Chaos Gate veil) are not managed windows;
+    // gating them flashed the drain grid across whole screens.
+    if (!w.managed) return false;
     if (w.popupWindow || w.outline || w.lockScreen || w.inputMethod) return false;
     if (w.desktopWindow || w.dock || w.splash || w.toolbar || w.notification || w.onScreenDisplay) return false;
     return w.normalWindow || w.dialog;
@@ -50,7 +55,9 @@ function gateOutOf(w, ms, to, offset) {
     w.gateAnimation = animate({
         window: w,
         duration: ms,
-        curve: QEasingCurve.InCubic,
+        // Moves from the first frame; an ease-in sat still for half the time and then
+        // vanished at once, which read as no animation at all.
+        curve: QEasingCurve.InOutSine,
         fragmentShader: gateOut,
         animations: animations
     });
