@@ -404,6 +404,21 @@ add(["battery-missing"], battery(0, missing=True))
 add(["bluetooth-active", "bluetooth-online", "bluetooth", "preferences-system-bluetooth", "network-bluetooth-activated", "network-bluetooth"], bluetooth(True))
 add(["bluetooth-paired"], bluetooth(True, paired=True))
 add(["bluetooth-disabled", "bluetooth-offline", "network-bluetooth-inactive"], bluetooth(False, off=True))
+def bell(badge=False, off=False):
+    cls = "Text" if off else "NeutralText"
+    out = [stroke(cls, "M6,15.5 V10.5 A5,5 0 0 1 16,10.5 V15.5 L17.6,17.2 H4.4 Z", 1.5, 0.5 if off else 1.0),
+           stroke(cls, "M9.2,19.2 A1.9,1.9 0 0 0 12.8,19.2", 1.5, 0.5 if off else 1.0),
+           fill(cls, sdiamond(11, 4.4, 1.2), 0.5 if off else 1.0)]
+    if badge:
+        out.append(fill("Highlight", sdiamond(16.6, 6.4, 3.4)))
+    if off:
+        out.append(SLASH)
+    return st("".join(out))
+
+
+add(["notifications", "notification-inactive", "preferences-desktop-notification", "preferences-desktop-notification-bell"], bell())
+add(["notification-active", "notification-new", "notifications-new"], bell(badge=True))
+add(["notification-disabled", "notifications-disabled"], bell(off=True))
 add(["airplane-mode"], airplane(True))
 add(["airplane-mode-off"], airplane(False))
 

@@ -20,7 +20,7 @@ Window {
         "network-vpn", "audio-volume-high", "audio-volume-medium", "audio-volume-low", "audio-volume-muted",
         "microphone-sensitivity-medium", "microphone-sensitivity-muted", "battery-100", "battery-060", "battery-020",
         "battery-010", "battery-040-charging", "battery-full-charged", "battery-missing", "bluetooth-active",
-        "bluetooth-paired", "bluetooth-disabled", "airplane-mode"]
+        "bluetooth-paired", "bluetooth-disabled", "airplane-mode", "notification-inactive", "notification-active", "notification-disabled"]
     Column {
         Repeater {
             model: [["dark", "#0b1126"], ["light", "#f3eee1"]]
