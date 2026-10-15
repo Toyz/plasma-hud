@@ -46,20 +46,46 @@ Item {
         anim.restart();
     }
 
-    // Arrival only (login, unlock): start covered at the peak, then gate in.
+    // Arrival (login, unlock). Cover first, decide second: hold() puts every screen at
+    // the peak (under the lock screen or the splash) so the desktop never shows before
+    // the gate-in; arrive() plays the gate-in from there, release() just fades the
+    // cover away when there is nothing to announce.
+    property bool held: false
+    function hold() {
+        if (running && !held) return;
+        arriveAnim.stop();
+        releaseAnim.stop();
+        glyph = "";
+        title = "";
+        action = null;
+        t = 1;
+        held = true;
+        running = true;
+    }
     function arrive(g, ti) {
-        if (running) return;
+        if (running && !held) return;
         glyph = g || "";
         title = ti || "";
         action = null;
         t = 1;
+        held = false;
         running = true;
         arriveAnim.restart();
     }
+    function release() {
+        if (!held) return;
+        held = false;
+        releaseAnim.restart();
+    }
     SequentialAnimation {
         id: arriveAnim
-        PauseAnimation { duration: 350 }
+        PauseAnimation { duration: 250 }
         NumberAnimation { target: warp; property: "t"; from: 1; to: 2; duration: 2100; easing.type: Easing.Linear }
+        ScriptAction { script: warp.running = false }
+    }
+    SequentialAnimation {
+        id: releaseAnim
+        NumberAnimation { target: warp; property: "t"; from: 1; to: 2; duration: 450; easing.type: Easing.OutQuad }
         ScriptAction { script: warp.running = false }
     }
 

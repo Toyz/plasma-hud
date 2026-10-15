@@ -90,7 +90,10 @@ PlasmoidItem {
         g.panel.windows = data.windows;
     }
     Timer { id: nameSoon; interval: 400; onTriggered: root.ensureNames() }
-    Component.onCompleted: nameSoon.start()
+    Component.onCompleted: {
+        nameSoon.start();
+        arriveOnLogin();
+    }
 
     // ------------------------------------------------------------ window frames
 
@@ -119,9 +122,11 @@ PlasmoidItem {
 
     // ------------------------------------------------------------ arrival
 
-    // Gate in when you arrive: on unlock (the screen locker's ActiveChanged(false)) and
-    // once per login (a marker in the runtime dir, so restarting plasmashell does not
-    // replay it). Shows the area you land in.
+    // Gate in when you arrive: on unlock and once per login (a marker in the runtime dir,
+    // so restarting plasmashell does not replay it). Shows the area you land in. Cover
+    // first, decide second, so the desktop never flashes before the gate-in: the cover
+    // goes up when the screen locks (under the lock screen) and as soon as this loads
+    // (under the splash).
     function arriveHere() {
         const i = Math.max(0, vd.desktopIds.indexOf(vd.currentDesktop));
         const parts = ctx.splitArea(areaName(i));
@@ -133,14 +138,14 @@ PlasmoidItem {
         path: "/ScreenSaver"
         iface: "org.freedesktop.ScreenSaver"
         function dbusActiveChanged(active) {
-            if (!active) root.arriveHere();
+            if (active) ctx.holdArrival();
+            else root.arriveHere();
         }
     }
-    Timer {
-        running: true
-        interval: 600
-        onTriggered: ctx.ask("f=\"${XDG_RUNTIME_DIR:-/tmp}/plasma-hud-arrived\"; [ -e \"$f\" ] || { : > \"$f\"; echo first; }",
-            out => { if (out === "first") root.arriveHere(); })
+    function arriveOnLogin() {
+        ctx.holdArrival();
+        ctx.ask("f=\"${XDG_RUNTIME_DIR:-/tmp}/plasma-hud-arrived\"; [ -e \"$f\" ] || { : > \"$f\"; echo first; }",
+            out => { if (out === "first") root.arriveHere(); else ctx.releaseArrival(); });
     }
 
     function areaName(i) {

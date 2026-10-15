@@ -206,6 +206,13 @@ Item {
         warpLoader.active = true;
         if (warpLoader.item) warpLoader.item.arrive(glyph, title);
     }
+    function holdArrival() {
+        warpLoader.active = true;
+        if (warpLoader.item) warpLoader.item.hold();
+    }
+    function releaseArrival() {
+        if (warpLoader.item) warpLoader.item.release();
+    }
     // Run a command and hand its trimmed stdout to fn.
     property var waiting: ({})
     function ask(cmd, fn) {
