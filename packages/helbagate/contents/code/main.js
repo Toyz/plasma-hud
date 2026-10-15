@@ -16,9 +16,12 @@ const minimizeMs = 850;
 // Real application windows only: no panels, popups, menus, tooltips or the desktop.
 function gated(w) {
     if (effects.hasActiveFullScreenEffect) return false;
-    // Layer-shell overlays (the gate warp, the Chaos Gate veil) are not managed windows;
-    // gating them flashed the drain grid across whole screens.
+    // Layer-shell overlays (the gate warp, the Chaos Gate and its veils) report as normal,
+    // managed windows when their scope is a custom one, so go by owner: nothing that
+    // plasmashell draws gets gated. Gating them flashed the drain grid across screens
+    // and made the Chaos Gate assemble one screen at a time.
     if (!w.managed) return false;
+    if (String(w.windowClass).indexOf("plasmashell") >= 0) return false;
     if (w.popupWindow || w.outline || w.lockScreen || w.inputMethod) return false;
     if (w.desktopWindow || w.dock || w.splash || w.toolbar || w.notification || w.onScreenDisplay) return false;
     return w.normalWindow || w.dialog;
