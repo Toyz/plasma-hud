@@ -472,6 +472,37 @@ restore_alacritty() {
     say "alacritty: previous config restored"
 }
 
+# fastfetch: the Helba World readout (gate sigil + short system list). The config is
+# linked into ~/.config/fastfetch; the fish greeting's fastfetch call is pointed at it.
+apply_fastfetch() {
+    command -v fastfetch >/dev/null 2>&1 || return 0
+    mkdir -p "$config/fastfetch" "$state"
+    ln -sfn "$root/packages/fastfetch/helba-world.jsonc" "$config/fastfetch/helba-world.jsonc"
+    ln -sfn "$root/packages/fastfetch/helba-world.txt" "$config/fastfetch/helba-world.txt"
+    fish="$config/fish/config.fish"
+    if [ -f "$fish" ]; then
+        [ -f "$state/config.fish.before" ] || cp "$fish" "$state/config.fish.before"
+        python3 - "$fish" <<'PY'
+import re, sys
+p = sys.argv[1]
+s = open(p).read()
+call = "fastfetch -c helba-world"
+if re.search(r"^\s*fastfetch\b", s, re.M):
+    s = re.sub(r"^(\s*)fastfetch\b.*$", lambda m: m.group(1) + call, s, flags=re.M)
+else:
+    s = s.rstrip("\n") + "\n\nfunction fish_greeting\n    " + call + "\nend\n"
+open(p, "w").write(s)
+PY
+    fi
+    say "fastfetch: Helba World readout"
+}
+
+restore_fastfetch() {
+    [ -f "$state/config.fish.before" ] && cp "$state/config.fish.before" "$config/fish/config.fish"
+    rm -f "$config/fastfetch/helba-world.jsonc" "$config/fastfetch/helba-world.txt"
+    say "fastfetch: previous greeting restored"
+}
+
 restore_splash() {
     [ -f "$state/ksplashrc.before" ] || return 0
     if [ -s "$state/ksplashrc.before" ]; then cp "$state/ksplashrc.before" "$config/ksplashrc"; else rm -f "$config/ksplashrc"; fi
@@ -548,6 +579,7 @@ case "${1:-}" in
         restore_splash
         restore_cursors
         restore_alacritty
+        restore_fastfetch
         restore_logout
         ;;
     --no-layout)
@@ -586,6 +618,7 @@ case "${1:-}" in
         apply_splash
         apply_cursors
         apply_alacritty
+        apply_fastfetch
         apply_logout
         units
         "$hudctl" layout

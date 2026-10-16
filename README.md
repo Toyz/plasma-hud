@@ -72,6 +72,12 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
     for the 16 ANSI colors, dark and light. The installer drops the inline color tables
     from your alacritty.toml and imports `helba-world.toml`, a link the Chaos Gate flips
     with the scheme (Alacritty live-reloads it)
+  - fastfetch (`packages/fastfetch`): the gate sigil in gold and cyan beside a short
+    readout; the installer points your fish greeting at it
+  - notification popups: glass plates stacked from the bottom right, app name in gold
+    small caps, gold action chips, a cyan line draining the time left, diamond-cell
+    progress for transfers. They borrow the tray notifications applet's popup model
+    (history, do-not-disturb and sounds stay Plasma's) and switch its own popups off
 
   Everything follows the KDE color scheme. Switch between Helba World and Helba World
   Light in System Settings and the whole rice flips.

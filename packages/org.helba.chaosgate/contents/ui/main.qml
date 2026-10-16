@@ -130,6 +130,25 @@ PlasmoidItem {
     // The .hack volume / brightness OSD (Plasma's own is kept invisible by Helba Gate).
     OsdOverlay { hud: ctx }
 
+    // The .hack notification popups. They borrow the tray notifications applet's popup
+    // model, so they load once that applet's module is in; until then (or if it never
+    // is) Plasma's own popups stay on.
+    Loader {
+        id: notify
+        property int tries: 0
+        function attempt() {
+            setSource(Qt.resolvedUrl("../../../org.helba.plasmahud/contents/ui/NotifyOverlay.qml") + "?t=" + tries,
+                      { hud: ctx });
+        }
+        onStatusChanged: if (status === Loader.Error && tries < 20) notifyRetry.start()
+        Component.onCompleted: attempt()
+    }
+    Timer {
+        id: notifyRetry
+        interval: 3000
+        onTriggered: { notify.tries++; notify.attempt(); }
+    }
+
     // ------------------------------------------------------------ arrival
 
     // Gate in when you arrive: on unlock and once per login (a marker in the runtime dir,

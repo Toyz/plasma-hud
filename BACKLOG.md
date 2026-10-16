@@ -83,4 +83,5 @@ Ordered. Check things off as they land.
 - [x] .hack OSD for volume / brightness (HUD draws it from Plasma's osdService notices)
 - [x] Cursor theme HelbaWorld-cursors: normal set in navy and gold, animated gate-ring busy cursors
 - [x] Alacritty colors (dark / light, follow the scheme through an imported link)
-- [ ] .hack notification popups
+- [x] .hack notification popups (borrow the stock applet popup model, draw our own)
+- [x] fastfetch greeting: gate sigil + short readout
