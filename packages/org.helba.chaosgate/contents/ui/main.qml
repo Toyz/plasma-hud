@@ -108,6 +108,11 @@ PlasmoidItem {
             + " && qdbus6 org.kde.KWin /KWin reconfigure; } ;; esac");
         // The Kvantum widget theme (menus, controls) follows the same way; apps pick it
         // up when they next start.
+        // Alacritty imports ~/.config/alacritty/helba-world.toml (and live-reloads it): point
+        // that link at the matching theme when it is ours.
+        const alacritty = "${XDG_CONFIG_HOME:-$HOME/.config}/alacritty/helba-world.toml";
+        ctx.run("l=\"" + alacritty + "\"; t=$(readlink \"$l\"); case \"$t\" in */packages/alacritty/helba-world*.toml) "
+            + "ln -sfn \"${t%/*}/helba-world" + (ctx.light ? "-light" : "") + ".toml\" \"$l\" ;; esac");
         const kv = ctx.light ? "HelbaWorldLight" : "HelbaWorld";
         ctx.run("f=${XDG_CONFIG_HOME:-$HOME/.config}/Kvantum/kvantum.kvconfig; "
             + "t=$(kreadconfig6 --file \"$f\" --group General --key theme); "

@@ -1,0 +1,69 @@
+# Helba World (.hack, The World) for Alacritty: light (parchment, bronze, teal).
+
+[colors.primary]
+background = "#f3eee1"
+foreground = "#1a2033"
+dim_foreground = "#5a6380"
+bright_foreground = "#0b1126"
+
+[colors.cursor]
+text = "#f3eee1"
+cursor = "#8a6418"
+
+[colors.vi_mode_cursor]
+text = "#f3eee1"
+cursor = "#14708a"
+
+[colors.selection]
+text = "#1a2033"
+background = "#bfdce3"
+
+[colors.search.matches]
+foreground = "#f3eee1"
+background = "#8a6418"
+
+[colors.search.focused_match]
+foreground = "#f3eee1"
+background = "#14708a"
+
+[colors.hints.start]
+foreground = "#f3eee1"
+background = "#8a6418"
+
+[colors.hints.end]
+foreground = "#f3eee1"
+background = "#14708a"
+
+[colors.footer_bar]
+foreground = "#f3eee1"
+background = "#8a6418"
+
+[colors.normal]
+black = "#1a2033"
+red = "#c81e45"
+green = "#1e8250"
+yellow = "#8a6418"
+blue = "#2b5fb8"
+magenta = "#7a3db8"
+cyan = "#14708a"
+white = "#8d98b6"
+
+[colors.bright]
+black = "#5a6380"
+red = "#e0365c"
+green = "#2a9a62"
+yellow = "#a07a06"
+blue = "#3b74d6"
+magenta = "#9150d4"
+cyan = "#1a8aa8"
+white = "#b9b2a0"
+
+[colors.dim]
+black = "#3a4258"
+red = "#9c2440"
+green = "#2a6a48"
+yellow = "#6e5418"
+blue = "#2a4e8e"
+magenta = "#5e3a8e"
+cyan = "#1a5a6e"
+white = "#6e7690"

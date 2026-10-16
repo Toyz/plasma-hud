@@ -1,0 +1,71 @@
+# Helba World (.hack, The World) for Alacritty: dark. Imported from alacritty.toml through
+# ~/.config/alacritty/helba-world.toml, which the installer and the Chaos Gate point at the
+# dark or light file to match the KDE color scheme.
+
+[colors.primary]
+background = "#0b1126"
+foreground = "#eaf0fb"
+dim_foreground = "#8d98b6"
+bright_foreground = "#ffffff"
+
+[colors.cursor]
+text = "#0b1126"
+cursor = "#e2c27d"
+
+[colors.vi_mode_cursor]
+text = "#0b1126"
+cursor = "#8fe3ff"
+
+[colors.selection]
+text = "#eaf0fb"
+background = "#1f4a63"
+
+[colors.search.matches]
+foreground = "#0b1126"
+background = "#b8935a"
+
+[colors.search.focused_match]
+foreground = "#0b1126"
+background = "#8fe3ff"
+
+[colors.hints.start]
+foreground = "#0b1126"
+background = "#e2c27d"
+
+[colors.hints.end]
+foreground = "#0b1126"
+background = "#8fe3ff"
+
+[colors.footer_bar]
+foreground = "#0b1126"
+background = "#b8935a"
+
+[colors.normal]
+black = "#141c3e"
+red = "#ff6074"
+green = "#78dca0"
+yellow = "#e2c27d"
+blue = "#6fa8ff"
+magenta = "#c58bff"
+cyan = "#8fe3ff"
+white = "#c9d2e6"
+
+[colors.bright]
+black = "#3a4670"
+red = "#ff8a9a"
+green = "#9be8bb"
+yellow = "#f5d79a"
+blue = "#93bfff"
+magenta = "#d9b0ff"
+cyan = "#b8f0ff"
+white = "#eaf0fb"
+
+[colors.dim]
+black = "#0b1126"
+red = "#b84458"
+green = "#559c73"
+yellow = "#a8905c"
+blue = "#4f78b8"
+magenta = "#8e64b8"
+cyan = "#64a3b8"
+white = "#8d98b6"

@@ -450,6 +450,28 @@ restore_cursors() {
     say "cursors: ${prev:-breeze_cursors} (restored)"
 }
 
+# Alacritty: Helba World colors through an import (dev/alacritty_setup.py drops the
+# inline color tables and adds the import; the rest of the config is kept). The
+# imported file is a link to the dark or light theme; the Chaos Gate flips it.
+apply_alacritty() {
+    command -v alacritty >/dev/null 2>&1 || return 0
+    conf="$config/alacritty/alacritty.toml"
+    mkdir -p "$config/alacritty" "$state"
+    [ -f "$conf" ] && [ ! -f "$state/alacritty.toml.before" ] && cp "$conf" "$state/alacritty.toml.before"
+    variant=helba-world
+    case "$(kreadconfig6 --group General --key ColorScheme 2>/dev/null)" in *Light*) variant=helba-world-light ;; esac
+    ln -sfn "$root/packages/alacritty/$variant.toml" "$config/alacritty/helba-world.toml"
+    python3 "$root/dev/alacritty_setup.py" "$conf" >/dev/null
+    say "alacritty: Helba World colors ($variant)"
+}
+
+restore_alacritty() {
+    [ -f "$state/alacritty.toml.before" ] || return 0
+    cp "$state/alacritty.toml.before" "$config/alacritty/alacritty.toml"
+    rm -f "$config/alacritty/helba-world.toml"
+    say "alacritty: previous config restored"
+}
+
 restore_splash() {
     [ -f "$state/ksplashrc.before" ] || return 0
     if [ -s "$state/ksplashrc.before" ]; then cp "$state/ksplashrc.before" "$config/ksplashrc"; else rm -f "$config/ksplashrc"; fi
@@ -525,6 +547,7 @@ case "${1:-}" in
         restore_icons
         restore_splash
         restore_cursors
+        restore_alacritty
         restore_logout
         ;;
     --no-layout)
@@ -562,6 +585,7 @@ case "${1:-}" in
         apply_icons
         apply_splash
         apply_cursors
+        apply_alacritty
         apply_logout
         units
         "$hudctl" layout
