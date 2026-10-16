@@ -81,7 +81,8 @@ Ordered. Check things off as they land.
 
 ## Pending outside this repo
 - [x] muralist: hudwall-aware wallpaper setter (b395269); verified live on all three screens
-- [x] .hack OSD for volume / brightness (HUD draws it from Plasma's osdService notices)
+- [x] .hack OSD for volume / brightness: dropped for the stock OSD (hiding the stock one
+      froze plasmashell on Plasma 6.8 + NVIDIA explicit sync, and it still flashed)
 - [x] Cursor theme HelbaWorld-cursors: normal set in navy and gold, animated gate-ring busy cursors
 - [x] Alacritty colors (dark / light, follow the scheme through an imported link)
 - [x] .hack notification popups (borrow the stock applet popup model, draw our own)

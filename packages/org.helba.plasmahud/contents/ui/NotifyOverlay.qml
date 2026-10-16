@@ -385,7 +385,7 @@ Item {
                             }
                         }
 
-                        // Job progress: diamond cells like the OSD.
+                        // Job progress: a row of diamond cells.
                         Row {
                             visible: card.isJob
                             spacing: 3

@@ -125,11 +125,6 @@ PlasmoidItem {
     }
     Timer { running: true; interval: 3000; onTriggered: root.syncFrames() }
 
-    // ------------------------------------------------------------ OSD
-
-    // The .hack volume / brightness OSD (Plasma's own is kept invisible by Helba Gate).
-    OsdOverlay { hud: ctx }
-
     // The .hack notification popups. They borrow the tray notifications applet's popup
     // model, so they load once that applet's module is in; until then (or if it never
     // is) Plasma's own popups stay on.

@@ -70,8 +70,6 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   - cursors (`HelbaWorld-cursors`): a normal cursor set in navy and gold with cyan
     diamonds, the busy cursor a turning gate ring; scalable SVG for Plasma plus Xcursor
     files (built at install) for X11 apps
-  - an on-screen display for volume and brightness: a glass plate with a bar of diamond
-    cells
   - Alacritty colors (`packages/alacritty`): navy glass, gold cursor, the .hack palette
     for the 16 ANSI colors, dark and light. The installer drops the inline color tables
     from your alacritty.toml and imports `helba-world.toml`, a link the Chaos Gate flips
