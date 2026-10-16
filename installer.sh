@@ -421,6 +421,35 @@ restore_logout() {
     say "logout screen: ${prev:-default} (restored)"
 }
 
+# Cursors: HelbaWorld-cursors (dev/cursors_gen.py). The scalable SVGs are committed;
+# the Xcursor files for X11 / XWayland apps are rendered here with rsvg-convert.
+link_cursors() {
+    if command -v rsvg-convert >/dev/null 2>&1; then
+        python3 "$root/dev/cursors_gen.py" "$root/packages/cursors/HelbaWorld-cursors" --xcursor >/dev/null
+    else
+        say "cursors: rsvg-convert missing, X11 apps keep their cursor (scalable set only)"
+    fi
+    mkdir -p "$data/icons"
+    ln -sfn "$root/packages/cursors/HelbaWorld-cursors" "$data/icons/HelbaWorld-cursors"
+    say "linked HelbaWorld-cursors"
+}
+
+apply_cursors() {
+    current=$(kreadconfig6 --file kcminputrc --group Mouse --key cursorTheme 2>/dev/null || true)
+    [ "$current" = HelbaWorld-cursors ] && { say "cursors: HelbaWorld-cursors (kept)"; return; }
+    mkdir -p "$state"
+    printf '%s\n' "$current" > "$state/cursors.before"
+    plasma-apply-cursortheme HelbaWorld-cursors >/dev/null 2>&1 || kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme HelbaWorld-cursors
+    say "cursors: HelbaWorld-cursors (was ${current:-breeze_cursors})"
+}
+
+restore_cursors() {
+    [ -f "$state/cursors.before" ] || return 0
+    prev=$(cat "$state/cursors.before")
+    plasma-apply-cursortheme "${prev:-breeze_cursors}" >/dev/null 2>&1 || true
+    say "cursors: ${prev:-breeze_cursors} (restored)"
+}
+
 restore_splash() {
     [ -f "$state/ksplashrc.before" ] || return 0
     if [ -s "$state/ksplashrc.before" ]; then cp "$state/ksplashrc.before" "$config/ksplashrc"; else rm -f "$config/ksplashrc"; fi
@@ -495,6 +524,7 @@ case "${1:-}" in
         restore_gtk
         restore_icons
         restore_splash
+        restore_cursors
         restore_logout
         ;;
     --no-layout)
@@ -507,6 +537,7 @@ case "${1:-}" in
         link_kvantum
         link_gtk
         link_icons
+        link_cursors
         units
         ;;
     "")
@@ -519,6 +550,7 @@ case "${1:-}" in
         link_kvantum
         link_gtk
         link_icons
+        link_cursors
         apply_theme
         apply_scheme
         apply_frames
@@ -529,6 +561,7 @@ case "${1:-}" in
         apply_gtk
         apply_icons
         apply_splash
+        apply_cursors
         apply_logout
         units
         "$hudctl" layout

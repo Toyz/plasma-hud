@@ -63,6 +63,12 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
     glyph, the type's short name); everything else comes from Papirus-Dark. App tray icons sent as pictures (Discord, Docker...) are
     tinted gold by the right island instead, since no icon theme can reach them
 
+  - cursors (`HelbaWorld-cursors`): a normal cursor set in navy and gold with cyan
+    diamonds, the busy cursor a turning gate ring; scalable SVG for Plasma plus Xcursor
+    files (built at install) for X11 apps
+  - an on-screen display for volume and brightness: a glass plate with a bar of diamond
+    cells
+
   Everything follows the KDE color scheme. Switch between Helba World and Helba World
   Light in System Settings and the whole rice flips.
 - **hudprobe**: socket-activated telemetry daemon (top processes, load, IP, pacman state).

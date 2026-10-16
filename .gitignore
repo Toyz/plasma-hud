@@ -19,3 +19,6 @@ __pycache__/
 
 # Machine-local tooling
 .qmlls.ini
+
+# Xcursor files: built by installer.sh from the committed SVGs (dev/cursors_gen.py)
+/packages/cursors/HelbaWorld-cursors/cursors/

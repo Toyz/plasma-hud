@@ -80,3 +80,5 @@ Ordered. Check things off as they land.
 
 ## Pending outside this repo
 - [x] muralist: hudwall-aware wallpaper setter (b395269); verified live on all three screens
+- [x] .hack OSD for volume / brightness (HUD draws it from Plasma's osdService notices)
+- [x] Cursor theme HelbaWorld-cursors: normal set in navy and gold, animated gate-ring busy cursors
