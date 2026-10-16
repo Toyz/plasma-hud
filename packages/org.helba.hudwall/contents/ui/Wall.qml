@@ -11,7 +11,7 @@ Item {
     // Image-reactive effects first (they transform the picture by its own pixels),
     // then the procedural overlay effects. Index == config value.
     readonly property var effects: ["drift", "drain", "depth", "ink", "sort", "growth", "bloom", "edges", "hue", "halftone",
-                                    "plasma", "gyroid", "synthgrid", "datamosh", "hexlens", "rd_show"]
+                                    "plasma", "gyroid", "synthgrid", "datamosh", "hexlens", "rd_show", "trace"]
     readonly property int effect: cfg.Effect
     readonly property bool effectOn: effect >= 0 && effect < effects.length
     readonly property bool usesRd: effect === 5 || effect === 15

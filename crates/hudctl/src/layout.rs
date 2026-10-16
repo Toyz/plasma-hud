@@ -286,9 +286,9 @@ pub fn apply(cfg: &mut Config) -> Vec<String> {
                 doc.set(&["Containments", &c.id], "wallpaperplugin", WALL);
                 doc.set(&dst, "Image", &image);
                 doc.set(&dst, "FillMode", &fill);
-                doc.set(&dst, "Effect", "1");
+                doc.set(&dst, "Effect", "16");
                 doc.set(&dst, "Span", "true");
-                log.push(format!("screen {} (desktop {}): hudwall Data Drain over {image}", c.screen, c.id));
+                log.push(format!("screen {} (desktop {}): hudwall Trace over {image}", c.screen, c.id));
             }
             other => log.push(format!("screen {} (desktop {}): wallpaper plugin {other} left alone", c.screen, c.id)),
         }

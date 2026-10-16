@@ -45,8 +45,10 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   load and net traces, processes, system, command deck), together in a popup or one per
   desktop widget.
 - **HUD Shader Wall** (`org.helba.hudwall`): per-screen GLSL wallpaper effects driven by the
-  image's own pixels. The default is Data Drain; others include chroma drift, depth, ink,
-  pixel sort and growth. It can span all screens seamlessly and pauses when windows cover it.
+  image's own pixels. The default is Trace: the picture is left exactly as it is, and
+  every so often a signal runs along its outlines, on all screens in lockstep (white-cyan head,
+  trail cooling to gold, diamond nodes on strong corners). Others include Data Drain,
+  chroma drift, depth, ink, pixel sort and growth. It can span all screens seamlessly and pauses when windows cover it.
 - **Look**:
   - a Plasma desktop theme (`helba-hud`) for the stock popups (volume, network, bluetooth)
   - Helba World KDE color schemes, dark and light

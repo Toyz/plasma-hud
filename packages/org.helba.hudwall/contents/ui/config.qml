@@ -73,6 +73,7 @@ Kirigami.FormLayout {
             i18n("Overlay: datamosh"),
             i18n("Overlay: hex lens"),
             i18n("Overlay: reaction-diffusion"),
+            i18n("Trace (.hack: the picture stays as it is; now and then a signal runs along its outlines)"),
             i18n("None (plain image)")
         ]
     }

@@ -20,7 +20,8 @@ Ordered. Check things off as they land.
 - [x] Search ranks by your usage (KActivities "popular"); new ↺ Frequent tab in Root Town
 - [x] .hack gate warp on all screens for every workspace switch (gate, panel maps); gate veil spans all screens
 - [x] Warp v2: sigil draw-in + keyword typing on the center screen, veil/white-out on all screens, ~3.5s
-- [x] Data Drain: .hack wallpaper effect over the image (hudwall effect 1, the default); no gold specks;
+- [x] Trace: hudwall effect 16, the default; image untouched, a signal runs along its edges now and then
+- [x] Data Drain: .hack wallpaper effect over the image (hudwall effect 1); no gold specks;
       spans all screens seamlessly (shared seed + wall-clock time); pauses when windows cover ~90% of a screen
 - [x] Add / remove workspaces: + slot and hover close mark (or middle-click) on the panel maps;
       Chaos Gate "Close this area" command and Shift+Del (twice) on an area row

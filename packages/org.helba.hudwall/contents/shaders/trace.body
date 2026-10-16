@@ -1,0 +1,84 @@
+// Trace (.hack): the picture is never touched; every so often a signal runs along its
+// outlines. A wavefront spreads from a random point, the same point on every screen at
+// the same moment (so all screens sweep in lockstep), and only the image's own edges light up as it passes: a white-cyan head that
+// stutters and flickers like bad data, a cyan trail cooling to gold, and gold diamond
+// nodes on the strongest corners. Then it fades and the plain image is left. The
+// output is always the source pixel plus a little added light on the edge lines.
+// Edges are measured as if the screen were 720 px tall, so the same outlines show at
+// any resolution (at 1440p a 1-texel gradient is half as steep).
+float edgeAt(vec2 uv, float lod) {
+    lod += max(0.0, log2(resolution.y / 720.0));
+    vec2 px = exp2(lod) * 1.25 / resolution;
+    return length(gradL(uv, lod, px));
+}
+
+void main() {
+    vec2 uv = qt_TexCoord0;
+    vec3 base = texture(src, uv).rgb;
+    const vec3 cyan = vec3(0.56, 0.89, 1.0);
+    const vec3 gold = vec3(0.89, 0.76, 0.49);
+
+    // The front runs at a steady pace across each screen; one per cycle, intensity
+    // shortens the rest between them.
+    const float speed = 900.0;  // px / s
+    float reach = length(resolution) * 1.05;
+    float dur = reach / speed;
+    float period = dur + mix(14.0, 3.0, intensity);
+    float cyc = floor(time / period);
+    vec2 ck = vec2(mod(cyc, 4096.0), seed * 37.0);
+    float lt = time - cyc * period;
+    if (lt > dur + 1.2) {
+        fragColor = vec4(base, 1.0) * qt_Opacity;
+        return;
+    }
+
+    vec2 gp = uv * resolution;  // screen px: every screen runs the same trace
+    vec2 origin = vec2(hash(ck + 1.7), hash(ck + 2.9)) * resolution;
+
+    // Ragged front, stuttering forward at irregular 14 fps steps.
+    float step14 = floor(lt * 14.0);
+    float jitter = (hash(ck + vec2(step14, 4.1)) - 0.5) * 90.0;
+    float front = lt * speed + jitter;
+    float d = distance(gp, origin) + (fbm(gp * 0.0035 + seed * 5.0) - 0.5) * 420.0;
+    float behind = front - d;   // > 0: the front has passed this pixel
+    if (behind < -40.0) {
+        fragColor = vec4(base, 1.0) * qt_Opacity;
+        return;
+    }
+
+    // The image's own outlines: fine edges plus a softer halo from a coarser mip.
+    float e = smoothstep(0.04, 0.18, edgeAt(uv, 0.6));
+    float halo = smoothstep(0.04, 0.22, edgeAt(uv, 2.5));
+    if (e + halo < 0.01) {
+        fragColor = vec4(base, 1.0) * qt_Opacity;
+        return;
+    }
+
+    float fadeOut = 1.0 - smoothstep(dur, dur + 1.2, lt);
+    float head = exp(-abs(behind) / 30.0);
+    float trail = behind > 0.0 ? exp(-behind / 900.0) : 0.0;
+
+    // Bad data at the head: short edge segments drop out and flash back per frame.
+    vec2 seg = floor(gp / 7.0);
+    float flick = mix(1.0, step(0.35, hash(seg + vec2(step14 * 3.0, cyc))), head);
+
+    vec3 trailCol = mix(gold, cyan, exp(-behind / 450.0));
+    vec3 glow = e * flick * (head * mix(cyan, vec3(1.0), 0.6) * 2.0 + trail * trailCol * 1.0)
+              + halo * (head * 0.25 + trail * 0.06) * cyan;
+
+    // Gold diamond nodes where the outline is strongest, lit as the trace reaches them.
+    const float cell = 34.0;
+    vec2 cid = floor(gp / cell);
+    vec2 cc = (cid + 0.5) * cell;
+    vec2 ccuv = cc / resolution;
+    float strong = smoothstep(0.25, 0.45, edgeAt(clamp(ccuv, 0.0, 1.0), 1.0));
+    float pick = step(0.4, hash(cid + seed * 9.0)) * strong;
+    vec2 q = abs(gp - cc);
+    float diamond = q.x + q.y;
+    float ring = smoothstep(1.6, 0.4, abs(diamond - 6.0)) + smoothstep(1.8, 0.0, diamond) * 0.6;
+    float nodeT = behind > 0.0 ? exp(-behind / 1400.0) : 0.0;
+    glow += gold * ring * pick * nodeT * 1.2;
+
+    vec3 col = base + glow * fadeOut * mix(0.6, 1.0, intensity);
+    fragColor = vec4(col, 1.0) * qt_Opacity;
+}
