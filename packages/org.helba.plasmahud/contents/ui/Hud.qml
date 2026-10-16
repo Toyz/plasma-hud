@@ -245,7 +245,7 @@ Item {
     // The Chaos Gate renames "Desktop N" a moment after it appears; don't wait forever.
     Timer {
         id: newAreaTimeout
-        interval: 1500
+        interval: 2500
         onTriggered: hud.enterNewArea(true)
     }
     function enterNewArea(force) {
@@ -254,8 +254,11 @@ Item {
             if (force) newAreaAt = -1;
             return;
         }
-        const name = String(areaInfo.desktopNames[i] || "");
-        if (!force && /^Desktop \d+$/.test(name)) return;
+        // KWin announces the new id before its name, so an empty name means "not yet",
+        // just like the "Desktop N" placeholder the Chaos Gate is about to replace.
+        let name = String(areaInfo.desktopNames[i] || "");
+        if (!force && (!name || /^Desktop \d+$/.test(name))) return;
+        if (!name) name = "Desktop " + (i + 1);
         newAreaAt = -1;
         newAreaTimeout.stop();
         switchDesktop(areaInfo.desktopIds[i], name);

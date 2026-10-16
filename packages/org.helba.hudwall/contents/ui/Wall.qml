@@ -67,6 +67,10 @@ Item {
 
     property real time: 0
     readonly property bool paused: (cfg.PauseWhenCovered && covered) || !root.visible
+    // Paused effects step aside for the plain image instead of freezing mid-frame.
+    readonly property bool showFx: effectOn && !paused
+    // Catch up to the wall clock the moment rendering resumes, before the effect shows.
+    onPausedChanged: if (!paused) time = (Date.now() / 1000 % 21600) * cfg.Speed
     Timer {
         id: clock
         interval: Math.round(1000 / Math.max(5, Math.min(240, cfg.Fps)))
@@ -90,14 +94,8 @@ Item {
     TaskManager.TasksModel {
         id: windows
         groupMode: TaskManager.TasksModel.GroupDisabled
-        screenGeometry: root.screenRect
-        virtualDesktop: desktops.currentDesktop
         activity: activities.currentActivity
-        filterByScreen: true
-        filterByVirtualDesktop: true
         filterByActivity: true
-        filterNotMinimized: true
-        filterHidden: true
     }
     Instantiator {
         id: windowWatch
@@ -106,6 +104,15 @@ Item {
             required property var model
             readonly property bool big: !!(model.IsMaximized || model.IsFullScreen)
             readonly property rect g: model.Geometry || Qt.rect(0, 0, 0, 0)
+            // Filtered here rather than with the model's screen / desktop / minimized
+            // filters, which together match nothing from inside a wallpaper.
+            readonly property bool live: !model.IsMinimized && !model.IsHidden
+                && (!!model.IsOnAllVirtualDesktops || (model.VirtualDesktops || []).indexOf(desktops.currentDesktop) >= 0)
+            readonly property bool onScreen: {
+                const cx = g.x + g.width / 2, cy = g.y + g.height / 2, r = root.screenRect;
+                return cx >= r.x && cx < r.x + r.width && cy >= r.y && cy < r.y + r.height;
+            }
+            onLiveChanged: coverCheck.restart()
             onBigChanged: coverCheck.restart()
             onGChanged: coverCheck.restart()
         }
@@ -119,8 +126,8 @@ Item {
             const rects = [];
             for (let i = 0; i < windowWatch.count; i++) {
                 const o = windowWatch.objectAt(i);
-                if (!o) continue;
-                if (o.big) { root.covered = true; return; }
+                if (!o || !o.live) continue;
+                if (o.big && o.onScreen) { root.covered = true; return; }
                 if (o.g.width > 0) rects.push(o.g);
             }
             // Sample a 24x14 grid of this screen; covered when 90% of it is under windows.
@@ -155,7 +162,7 @@ Item {
     ShaderEffectSource {
         id: imgTex
         sourceItem: img
-        hideSource: root.effectOn
+        hideSource: root.showFx
         live: true
         mipmap: true
         smooth: true
@@ -236,7 +243,7 @@ Item {
     ShaderEffect {
         id: fx
         anchors.fill: parent
-        visible: root.effectOn
+        visible: root.showFx
         vertexShader: Qt.resolvedUrl("../shaders/fx.vert.qsb")
         fragmentShader: root.shader
 
