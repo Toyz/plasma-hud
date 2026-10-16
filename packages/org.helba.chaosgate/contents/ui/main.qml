@@ -120,6 +120,11 @@ PlasmoidItem {
     }
     Timer { running: true; interval: 3000; onTriggered: root.syncFrames() }
 
+    // ------------------------------------------------------------ OSD
+
+    // The .hack volume / brightness OSD (Plasma's own is kept invisible by Helba Gate).
+    OsdOverlay { hud: ctx }
+
     // ------------------------------------------------------------ arrival
 
     // Gate in when you arrive: on unlock and once per login (a marker in the runtime dir,

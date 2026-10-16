@@ -109,6 +109,17 @@ effects.windowClosed.connect(w => {
     gateOutOf(w, closeMs, { value1: 0.97, value2: 0.97 }, null);
 });
 
+// Plasma's on-screen display (volume, brightness...) stays invisible: the HUD draws a
+// .hack one from the same D-Bus notices. It is plasmashell's OSD-type window; the HUD's
+// own overlay is a layer-shell window of normal type and is left alone.
+function hideStockOsd(w) {
+    if (!w.onScreenDisplay || String(w.windowClass).indexOf("plasmashell") < 0) return;
+    if (w.osdHidden) cancel(w.osdHidden);
+    w.osdHidden = set({ window: w, duration: 1, animations: [{ type: Effect.Opacity, to: 0 }] });
+}
+effects.windowAdded.connect(hideStockOsd);
+effects.stackingOrder.forEach(hideStockOsd);
+
 // Another effect took the window over: let it.
 effects.windowDataChanged.connect((w, role) => {
     if (role === Effect.WindowAddedGrabRole || role === Effect.WindowClosedGrabRole) {
