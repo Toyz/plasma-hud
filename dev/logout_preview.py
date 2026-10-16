@@ -23,7 +23,7 @@ out = sys.argv[3] if len(sys.argv) > 3 else f"logout-{mode}-{int(light)}.png"
 sd = {"all": -1, "logout": 0, "reboot": 1, "halt": 2}[mode]
 
 tmp = tempfile.mkdtemp()
-src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../packages/lookandfeel/contents/logout/Logout.qml")
+src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../packages/lockshell/contents/logout/Logout.qml")
 text = open(src).read().replace("readonly property bool light: Kirigami.Theme.backgroundColor.hslLightness > 0.5",
                                 f"readonly property bool light: {'true' if light else 'false'}")
 open(os.path.join(tmp, "Logout.qml"), "w").write(text)

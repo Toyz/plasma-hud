@@ -1,4 +1,7 @@
-#version 140
+#version 300 es
+// KWin composites with OpenGL ES only since Plasma 6.8 (NVIDIA desktop GL takes this too).
+precision highp float;
+precision highp sampler2D;
 // Gate out: the window drains away like Data Drain. Cells lift upward on their own
 // beat, top rows first, tinting toward data-cyan and shrinking as they go, leaving
 // faint gold cell edges behind. progress runs 0 -> 1.

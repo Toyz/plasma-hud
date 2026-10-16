@@ -7,10 +7,10 @@
                 "Name": "helba"
             }
         ],
-        "Description": "Helba World lock screen. Not a desktop shell: the screen locker loads it through PLASMA_DEFAULT_SHELL in KWin's environment; plasmashell keeps org.kde.plasma.desktop.",
+        "Description": "Helba World lock and logout screens. Not a desktop shell: the screen locker (through KWin's environment) and the logout greeter (through a D-Bus service override) load it via PLASMA_DEFAULT_SHELL; plasmashell keeps org.kde.plasma.desktop.",
         "Id": "org.helba.lockshell",
         "License": "MIT",
-        "Name": "Helba World lock screen",
+        "Name": "Helba World lock and logout screens",
         "Version": "1.0.0"
     },
     "X-Plasma-APIVersion": "2"

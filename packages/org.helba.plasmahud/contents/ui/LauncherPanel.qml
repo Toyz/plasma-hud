@@ -304,7 +304,7 @@ FocusScope {
                 // Each stat: label + percent over an HP/SP style bar; hover for the real figures.
                 Item {
                     id: stat
-                    required property var modelDataData
+                    required property var modelData
                     readonly property real v: lp.hud[modelData[0]]
                     readonly property string detail: {
                         const H = lp.hud;

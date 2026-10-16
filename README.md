@@ -39,7 +39,9 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
   stage by stage under "The World", ending on the warp's midnight.
 - **Logout screen**: "Leave The World?" over the turning sigil, with gold-trimmed plates
   for sleep, hibernate, restart, shut down, log out, lock and stay; a direct request
-  (Shut down from a menu) shows its plate with a 30 s countdown ring.
+  (Shut down from a menu) shows its plate with a 30 s countdown ring. Since Plasma 6.8
+  the logout greeter reads the shell package, so it lives in `packages/lockshell` next to
+  the lock screen, and a user D-Bus service file starts the greeter pointed at it.
 - **Arrival**: the gate-in plays across every screen when you log in and when you unlock.
 - **HUD popup and HUD Tiles** (`org.helba.hudtile`): telemetry cards (gauges, core matrix,
   load and net traces, processes, system, command deck), together in a popup or one per
@@ -74,8 +76,10 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
     for the 16 ANSI colors, dark and light. The installer drops the inline color tables
     from your alacritty.toml and imports `helba-world.toml`, a link the Chaos Gate flips
     with the scheme (Alacritty live-reloads it)
-  - fastfetch (`packages/fastfetch`): the gate sigil in gold and cyan beside a short
-    readout; the installer points your fish greeting at it
+  - fastfetch (`packages/fastfetch`): the Data Drain sigil in braille (three gold blades
+    around a cyan triangle core, drawn by `dev/fastfetch_logo.py`, which also has the Chaos
+    Gate and Twilight Bracelet) beside a short readout; the installer points your fish
+    greeting at it
   - notification popups: glass plates stacked from the bottom right, app name in gold
     small caps, gold action chips, a cyan line draining the time left, diamond-cell
     progress for transfers. They borrow the tray notifications applet's popup model

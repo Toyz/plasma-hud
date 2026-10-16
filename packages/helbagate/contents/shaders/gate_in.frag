@@ -1,4 +1,7 @@
-#version 140
+#version 300 es
+// KWin composites with OpenGL ES only since Plasma 6.8 (NVIDIA desktop GL takes this too).
+precision highp float;
+precision highp sampler2D;
 // Gate in: the window assembles from data cells. Rows near the middle arrive first,
 // each cell on its own beat; a cell flashes data-cyan as it locks in and a thin gold
 // rule rides the arrival front. progress runs 0 -> 1.

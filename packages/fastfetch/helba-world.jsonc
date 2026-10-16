@@ -1,13 +1,13 @@
-// Helba World fastfetch: the gate sigil in gold and cyan beside a short system
-// readout. Colors are ANSI names, so the terminal theme (Helba World dark or light
+// Helba World fastfetch: the Data Drain sigil in braille (dev/fastfetch_logo.py draws
+// it) beside a short system readout. Colors are ANSI names, so the terminal theme (Helba World dark or light
 // in Alacritty) decides the exact shades.
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
     "logo": {
         "type": "file",
         "source": "~/.config/fastfetch/helba-world.txt",
-        "color": { "1": "yellow", "2": "cyan" },
-        "padding": { "top": 1, "left": 2, "right": 4 }
+        "color": { "1": "yellow", "2": "cyan", "3": "blue", "4": "bright_white" },
+        "padding": { "top": 0, "left": 2, "right": 4 }
     },
     "display": {
         "separator": "  ",
@@ -25,6 +25,10 @@
         { "type": "cpu", "key": "core", "format": "{name}" },
         { "type": "gpu", "key": "gpu", "format": "{name}" },
         { "type": "memory", "key": "memory" },
+        { "type": "disk", "key": "disk", "folders": "/", "format": "{size-used} / {size-total}" },
+        { "type": "de", "key": "desktop" },
+        { "type": "terminal", "key": "terminal" },
+        { "type": "packages", "key": "packages" },
         "break",
         { "type": "custom", "format": "{#yellow}◆ {#cyan}◆ {#blue}◆ {#magenta}◆ {#red}◆ {#green}◆ {#white}◆" }
     ]

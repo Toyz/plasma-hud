@@ -330,6 +330,13 @@ install_sddm() {
     printf '# plasma-hud: Helba World login screen\n[Theme]\nCurrent=helba-world\n' | sudo tee "$sddm_conf" >/dev/null
     rm -rf "$tmp"
     say "login screen: Helba World (shows at the next login)"
+    # Plasma 6.8 ships Plasma Login Manager, whose greeter is built in and takes no
+    # themes; the theme only shows when SDDM is the display manager.
+    dm=$(basename "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" .service)
+    if [ -n "$dm" ] && [ "$dm" != sddm ]; then
+        say "note: the display manager is $dm, not SDDM, so this theme will not show. To switch:"
+        say "  sudo systemctl disable $dm.service && sudo systemctl enable sddm.service   (then reboot)"
+    fi
 }
 
 restore_sddm() {
@@ -402,23 +409,37 @@ apply_splash() {
     say "splash: Helba World (was ${current:-the global theme's})"
 }
 
-# Logout screen: ksmserver-logout-greeter only reads the global theme key, so it
-# points at org.helba.world (splash + logout only). Nothing else reads that key
-# outside the Global Theme settings page, where re-applying a theme sets it again.
+# Logout screen: since Plasma 6.8 ksmserver-logout-greeter takes its QML from the shell
+# package (plasmashellrc ShellPackage, else PLASMA_DEFAULT_SHELL), like the lock screen.
+# The greeter is D-Bus activated, so a user service file starts it with
+# PLASMA_DEFAULT_SHELL=org.helba.lockshell; plasmashell itself is untouched.
+logout_service="$data/dbus-1/services/org.kde.LogoutPrompt.service"
 apply_logout() {
-    current=$(kreadconfig6 --group KDE --key LookAndFeelPackage 2>/dev/null || true)
-    [ "$current" = org.helba.world ] && { say "logout screen: Helba World (kept)"; return; }
-    mkdir -p "$state"
-    printf '%s\n' "$current" > "$state/lookandfeel.before"
-    kwriteconfig6 --group KDE --key LookAndFeelPackage org.helba.world
-    say "logout screen: Helba World (global theme key was ${current:-default})"
+    # Before 6.8 this pointed the global theme key at org.helba.world; put it back.
+    restore_lookandfeel_key
+    stock=/usr/share/dbus-1/services/org.kde.LogoutPrompt.service
+    exe=$(sed -n 's/^Exec=//p' "$stock" 2>/dev/null)
+    [ -n "$exe" ] || exe=/usr/lib/ksmserver-logout-greeter
+    mkdir -p "$(dirname "$logout_service")"
+    printf '%s\n' "# plasma-hud: Helba World logout screen (lockshell package)" \
+        "[D-BUS Service]" "Name=org.kde.LogoutPrompt" \
+        "Exec=/usr/bin/env PLASMA_DEFAULT_SHELL=org.helba.lockshell $exe" > "$logout_service"
+    busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ReloadConfig >/dev/null 2>&1 || true
+    say "logout screen: Helba World"
 }
 
-restore_logout() {
+restore_lookandfeel_key() {
     [ -f "$state/lookandfeel.before" ] || return 0
     prev=$(cat "$state/lookandfeel.before")
     if [ -n "$prev" ]; then kwriteconfig6 --group KDE --key LookAndFeelPackage "$prev"; else kwriteconfig6 --group KDE --key LookAndFeelPackage --delete; fi
-    say "logout screen: ${prev:-default} (restored)"
+    rm -f "$state/lookandfeel.before"
+}
+
+restore_logout() {
+    restore_lookandfeel_key
+    rm -f "$logout_service"
+    busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ReloadConfig >/dev/null 2>&1 || true
+    say "logout screen: stock"
 }
 
 # Cursors: HelbaWorld-cursors (dev/cursors_gen.py). The scalable SVGs are committed;
