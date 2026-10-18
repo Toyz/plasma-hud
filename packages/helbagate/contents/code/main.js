@@ -1,6 +1,7 @@
 // Helba Gate: windows gate in and out like The World. KWin only takes third-party
 // animation effects as scripts, so this file is just wiring; the look is the two
-// shaders in ../shaders (gate_in: assemble from data cells, gate_out: drain away).
+// shaders in ../shaders (gate_in: assemble from data cells on restore, gate_out: drain
+// away on close and minimize). New windows fade in without a shader (see fadeInto).
 "use strict";
 
 const traits = Effect.MapTexture | Effect.Modulate;
@@ -9,7 +10,7 @@ const gateOut = effect.addFragmentShader(traits, "gate_out.frag");
 
 // Fixed lengths: a gate should read as a gate even when the global animation speed is
 // turned up for everything else.
-const openMs = 900;
+const fadeMs = 380;
 const closeMs = 800;
 const minimizeMs = 480;
 const restoreMs = 520;
@@ -59,21 +60,22 @@ function gateInto(w, ms, from) {
     });
 }
 
-function gateOutOf(w, ms, to, offset) {
+// Opening is a plain fade and rise, no shader. The gate shader draws from an offscreen
+// copy, and on KWin 6.8 a copy made from a new window's first frame keeps that frame's
+// scale (the window showed zoomed in until the gate ended); holding the window back
+// instead stalled the app (KWin sends no frame callbacks to a window it does not draw).
+// Close, minimize and restore act on settled windows and keep the gate.
+function fadeInto(w) {
     stop(w);
-    const animations = [
-        { type: Effect.ShaderUniform, uniform: "progress", from: 0, to: 1 },
-        { type: Effect.Scale, to: to }
-    ];
-    if (offset) animations.push({ type: Effect.Translation, to: offset });
     w.gateAnimation = animate({
         window: w,
-        duration: ms,
-        // Moves from the first frame; an ease-in sat still for half the time and then
-        // vanished at once, which read as no animation at all.
-        curve: QEasingCurve.InOutSine,
-        fragmentShader: gateOut,
-        animations: animations
+        duration: fadeMs,
+        curve: QEasingCurve.OutCubic,
+        animations: [
+            { type: Effect.Opacity, from: 0, to: 1 },
+            { type: Effect.Scale, from: { value1: 0.95, value2: 0.95 }, to: { value1: 1.0, value2: 1.0 } },
+            { type: Effect.Brightness, from: 1.35, to: 1.0 }
+        ]
     });
 }
 
@@ -100,7 +102,7 @@ effects.windowAdded.connect(w => {
     watch(w);
     if (!gated(w) || !w.visible) return;
     if (!effect.grab(w, Effect.WindowAddedGrabRole)) return;
-    gateInto(w, openMs, { value1: 0.96, value2: 0.96 });
+    fadeInto(w);
 });
 
 effects.windowClosed.connect(w => {

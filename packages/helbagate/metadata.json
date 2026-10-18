@@ -8,7 +8,7 @@
             }
         ],
         "Category": "Appearance",
-        "Description": "Windows gate in and out like The World: they assemble from data cells when they open and drain away when they close or minimize",
+        "Description": "Windows gate in and out like The World: they fade in when they open, assemble from data cells when restored and drain away when they close or minimize",
         "EnabledByDefault": false,
         "Id": "helbagate",
         "License": "MIT",

@@ -49,7 +49,8 @@ Ordered. Check things off as they land.
       menus with gold edge, studs and the cyan/bracket hover; works on the Wayland translucent path
 - [x] Gate in / gate out window animations: KWin effect helbagate (packages/helbagate). Windows assemble
       from data cells on open / unminimize and drain away on close / minimize (toward their task tile);
-      replaces Glide and Squash
+      replaces Glide and Squash. Since Plasma 6.8 new windows fade and rise in instead (the shader's
+      offscreen copy of a window's first frame came out zoomed); restore keeps the assembly
 - [x] Kvantum list items: .hack hover / press / selection, no white press flash; KDE apps translucent + blur
 - [x] Alt+Tab party roster (helba-roster): member lines with diamond icon badges, cyan wash + gold
       brackets on the current one, live view of it; Meta+Tab gate ring (helba-gatering): live windows on

@@ -21,7 +21,9 @@ trim, data cyan, Greek server glyphs, gate warps. It is built for my own machine
 - **Gate warp**: a .hack gate-out / gate-in transition across every screen on each
   workspace switch.
 - **Helba Gate** (`packages/helbagate`): KWin effect for window open, close and minimize.
-  Windows assemble from data cells and drain away, in GLSL. It is the one small piece
+  New windows fade and rise in; restored windows assemble from data cells and closing or
+  minimized ones drain away, in GLSL. (On Plasma 6.8 the shader zoomed a brand-new
+  window's first frame, so opening skips it.) It is the one small piece
   of JavaScript in the repo, because KWin only accepts third-party animation effects as
   scripts.
 - **Switchers**: Alt+Tab is the party roster (`helba-roster`), a list of windows with a
