@@ -3,6 +3,9 @@
 Ordered. Check things off as they land.
 
 ## Now
+- [ ] Intermittent: an app opened on an empty screen keeps a pulsing tile on the bar for 5-6 s
+      (or shows late). Task strips log every starting tile and when each window's tile shows on
+      which bar; after it happens: `journalctl --user -b QT_CATEGORY=plasmahud.tasks -o short-precise`
 - [x] Minimized windows vanish from their screen's task strip (KWin marks them hidden; stop filtering hidden)
 - [x] Floating islands bar, replacing the stock panel entirely:
   - left: HUD launcher button + workspace switcher

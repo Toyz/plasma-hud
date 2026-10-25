@@ -107,6 +107,74 @@ Item {
         }
     }
 
+    // Task log (category plasmahud.tasks, one line per change): when a "starting" tile
+    // appears and how long it lives, and when each window's tile shows up on which
+    // screen's bar, counted from the moment the window appeared. For the intermittent
+    // "new app's tile keeps pulsing / shows late" bug:
+    //   journalctl --user -b QT_CATEGORY=plasmahud.tasks -o short-precise
+    // The left-most bar logs the model; every bar logs its own tiles.
+    LoggingCategory {
+        id: taskLog
+        name: "plasmahud.tasks"
+        defaultLogLevel: LoggingCategory.Info
+    }
+    readonly property bool logLead: screenRect.x === 0 && screenRect.y === 0
+    readonly property string logTag: "bar@" + screenRect.x
+    property var seenAt: ({})       // task key -> first seen (ms)
+    property var lastKeys: null     // task key -> description, previous snapshot
+    property var shownKeys: ({})    // task keys this bar has shown
+    property bool logQuiet: false   // plasmashell is quitting: bars empty out, say nothing
+    Connections {
+        target: Qt.application
+        function onAboutToQuit() { strip.logQuiet = true; }
+    }
+    function taskKey(m) {
+        return String(m.AppId || m.LauncherUrlWithoutIcon || "?") + "#"
+            + String((m.WinIdList || [])[0] || (m.IsStartup ? "startup" : ""));
+    }
+    function screenOf(sg) { return sg && sg.width > 0 ? String(sg.x) : "?"; }
+    function snapshotTasks() {
+        const A = TaskManager.AbstractTasksModel, now = Date.now(), keys = {};
+        for (let i = 0; i < tasks.count; i++) {
+            const idx = tasks.makeModelIndex(i);
+            if (tasks.data(idx, A.IsLauncher)) continue;
+            const m = { AppId: tasks.data(idx, A.AppId), WinIdList: tasks.data(idx, A.WinIdList),
+                        IsStartup: tasks.data(idx, A.IsStartup), LauncherUrlWithoutIcon: tasks.data(idx, A.LauncherUrlWithoutIcon) };
+            const k = taskKey(m);
+            keys[k] = (m.IsStartup ? "starting" : "window") + " screen=" + screenOf(tasks.data(idx, A.ScreenGeometry));
+            if (!(k in seenAt)) seenAt[k] = now;
+        }
+        // The first snapshot is the session as it stands: record it, log nothing.
+        if (logLead && lastKeys !== null && !logQuiet) {
+            for (const k in keys)
+                if (!(k in lastKeys)) console.info(taskLog, "+", k, keys[k]);
+                else if (lastKeys[k] !== keys[k]) console.info(taskLog, "~", k, keys[k], "after", now - seenAt[k], "ms");
+            for (const k in lastKeys)
+                if (!(k in keys)) console.info(taskLog, "-", k, lastKeys[k], "lived", now - (seenAt[k] || now), "ms");
+        }
+        for (const k in (lastKeys || {})) if (!(k in keys)) delete seenAt[k];
+        lastKeys = keys;
+    }
+    function logTile(m, shown) {
+        const k = taskKey(m);
+        if (logQuiet || m.IsLauncher || !(k in seenAt) || lastKeys === null) return;
+        if (!shown && !shownKeys[k]) return;
+        if (shown) shownKeys[k] = true; else delete shownKeys[k];
+        console.info(taskLog, logTag, shown ? "shows" : "hides", k, Date.now() - seenAt[k], "ms after it appeared",
+                     m.IsStartup ? "(starting)" : "", "launchedHere=" + launchedHere(m));
+    }
+    Component.onCompleted: Qt.callLater(snapshotTasks)
+    Connections {
+        target: tasks
+        function onRowsInserted() { strip.snapshotTasks(); }
+        function onRowsRemoved() { strip.snapshotTasks(); }
+        function onDataChanged(a, b, roles) {
+            const A = TaskManager.AbstractTasksModel;
+            if (roles.indexOf(A.IsStartup) >= 0 || roles.indexOf(A.ScreenGeometry) >= 0 || roles.indexOf(A.WinIdList) >= 0)
+                strip.snapshotTasks();
+        }
+    }
+
     function indexOf(i) { return tasks.makeModelIndex(i); }
 
     function activate(tile) {
@@ -185,6 +253,7 @@ Item {
                 dragging: strip.dragFrom === index
                 hovered: area.containsMouse
                 visible: strip.owns(tile.model)
+                onVisibleChanged: strip.logTile(tile.model, visible)
                 onXChanged: geomTimer.restart()
                 onWidthChanged: geomTimer.restart()
 
